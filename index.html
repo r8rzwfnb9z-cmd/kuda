@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
   <title>куда?</title>
 
   <style>
@@ -58,7 +59,7 @@
       font-size: 18px;
       line-height: 1.5;
       color: #666;
-      max-width: 360px;
+      max-width: 380px;
       margin-bottom: 36px;
     }
 
@@ -79,10 +80,51 @@
       transform: scale(0.97);
     }
 
+    .secondary-button {
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      padding: 18px 20px;
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #e8e3da;
+      color: #1d1d1d;
+      margin-top: 12px;
+      transition: transform 0.15s ease;
+    }
+
+    .secondary-button:active {
+      transform: scale(0.97);
+    }
+
     .footer {
       text-align: center;
       color: #999;
       font-size: 13px;
+    }
+
+    .city-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      border-radius: 18px;
+      padding: 18px 20px;
+      font-size: 17px;
+      background: white;
+      color: #1d1d1d;
+      margin-bottom: 12px;
+    }
+
+    .back-button {
+      border: none;
+      background: transparent;
+      color: #777;
+      font-size: 15px;
+      padding: 12px 0;
+      cursor: pointer;
+      margin-bottom: 10px;
+      text-align: left;
     }
   </style>
 </head>
@@ -119,10 +161,169 @@
 
   </main>
 
+
   <script>
+
+    // Первый экран — выбор города
+
     function startApp() {
-      alert("Отлично! Сейчас начнём создавать твой маршрут ✨");
+
+      document.querySelector(".hero").innerHTML = `
+
+        <div class="emoji">📍</div>
+
+        <h1>Где ты<br>сегодня?</h1>
+
+        <p class="subtitle">
+          Выбери город, чтобы мы могли подобрать
+          места, события и построить маршрут.
+        </p>
+
+        <button class="start-button" onclick="chooseCity()">
+          📍 Определить местоположение
+        </button>
+
+        <button class="secondary-button" onclick="enterCity()">
+          ⌨️ Ввести город
+        </button>
+
+      `;
+
     }
+
+
+    // Пока временная кнопка геолокации
+
+    function chooseCity() {
+
+      alert(
+        "Функцию определения местоположения подключим следующим этапом 📍"
+      );
+
+    }
+
+
+    // Ввод города вручную
+
+    function enterCity() {
+
+      document.querySelector(".hero").innerHTML = `
+
+        <button class="back-button" onclick="startApp()">
+          ← Назад
+        </button>
+
+        <div class="emoji">🌆</div>
+
+        <h1>Какой<br>город?</h1>
+
+        <p class="subtitle">
+          Напиши город, в котором хочешь провести свой день.
+        </p>
+
+        <input
+          class="city-input"
+          id="cityInput"
+          type="text"
+          placeholder="Например, Франкфурт"
+        >
+
+        <button class="start-button" onclick="saveCity()">
+          Продолжить →
+        </button>
+
+      `;
+
+      document.getElementById("cityInput").focus();
+
+    }
+
+
+    // Сохраняем город
+
+    function saveCity() {
+
+      const city = document
+        .getElementById("cityInput")
+        .value
+        .trim();
+
+      if (!city) {
+
+        alert("Напиши название города 🙂");
+
+        return;
+
+      }
+
+      // Пока просто сохраняем город
+      localStorage.setItem("city", city);
+
+      showMoodScreen(city);
+
+    }
+
+
+    // Следующий экран — настроение
+
+    function showMoodScreen(city) {
+
+      document.querySelector(".hero").innerHTML = `
+
+        <button class="back-button" onclick="enterCity()">
+          ← Назад
+        </button>
+
+        <div class="emoji">✨</div>
+
+        <h1>Какое у тебя<br>настроение?</h1>
+
+        <p class="subtitle">
+          Сегодня ты в городе: <strong>${city}</strong>
+        </p>
+
+        <button class="secondary-button" onclick="selectMood('Спокойно')">
+          😌 Спокойно
+        </button>
+
+        <button class="secondary-button" onclick="selectMood('Движуха')">
+          ⚡ Хочу движухи
+        </button>
+
+        <button class="secondary-button" onclick="selectMood('Романтика')">
+          💕 Романтично
+        </button>
+
+        <button class="secondary-button" onclick="selectMood('Красиво')">
+          🎨 Хочу что-нибудь красивое
+        </button>
+
+        <button class="secondary-button" onclick="selectMood('Веселье')">
+          🎉 Хочу повеселиться
+        </button>
+
+        <button class="secondary-button" onclick="selectMood('Новое')">
+          🧠 Хочу узнать что-нибудь новое
+        </button>
+
+      `;
+
+    }
+
+
+    // Сохраняем настроение
+
+    function selectMood(mood) {
+
+      localStorage.setItem("mood", mood);
+
+      alert(
+        "Отлично! Настроение: " + mood + " ✨\n\n" +
+        "Следующим шагом добавим остальные вопросы."
+      );
+
+    }
+
   </script>
 
 </body>
