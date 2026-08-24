@@ -6,6 +6,7 @@ import math
 app = Flask(__name__)
 CORS(app)
 
+
 # ============================================================
 # НАСТРОЙКИ
 # ============================================================
@@ -24,7 +25,7 @@ HEADERS = {
 
 
 # ============================================================
-# РАССТОЯНИЕ МЕЖДУ КООРДИНАТАМИ
+# РАССТОЯНИЕ
 # ============================================================
 
 def distance_km(lat1, lon1, lat2, lon2):
@@ -52,7 +53,7 @@ def distance_km(lat1, lon1, lat2, lon2):
 
 
 # ============================================================
-# ГОРОД → КООРДИНАТЫ
+# ПОИСК ГОРОДА
 # ============================================================
 
 def geocode_city(city):
@@ -82,21 +83,29 @@ def geocode_city(city):
         if not results:
             return None
 
+        result = results[0]
+
         return {
-            "latitude": float(results[0]["lat"]),
-            "longitude": float(results[0]["lon"]),
-            "display_name": results[0].get(
+            "latitude": float(result["lat"]),
+            "longitude": float(result["lon"]),
+            "display_name": result.get(
                 "display_name",
                 city
             )
         }
 
-    except Exception:
+    except Exception as error:
+
+        print(
+            "Ошибка поиска города:",
+            error
+        )
+
         return None
 
 
 # ============================================================
-# КАТЕГОРИИ МЕСТ
+# КАТЕГОРИИ
 # ============================================================
 
 def get_categories(interests):
@@ -104,106 +113,140 @@ def get_categories(interests):
     categories = []
 
     text = " ".join(
-        str(x) for x in interests
+        str(item)
+        for item in interests
     ).lower()
 
+
     if "кофе" in text:
-        categories += [
+
+        categories.append(
             '["amenity"="cafe"]'
-        ]
+        )
+
 
     if "еда" in text:
-        categories += [
+
+        categories.extend([
             '["amenity"="restaurant"]',
             '["amenity"="fast_food"]'
-        ]
+        ])
+
 
     if "бары" in text:
-        categories += [
+
+        categories.extend([
             '["amenity"="bar"]',
             '["amenity"="pub"]',
             '["amenity"="nightclub"]'
-        ]
+        ])
+
 
     if "искусство" in text:
-        categories += [
+
+        categories.extend([
             '["tourism"="museum"]',
             '["tourism"="gallery"]'
-        ]
+        ])
+
 
     if "театр" in text:
-        categories += [
+
+        categories.append(
             '["amenity"="theatre"]'
-        ]
+        )
+
 
     if "музыка" in text:
-        categories += [
+
+        categories.append(
             '["amenity"="music_venue"]'
-        ]
+        )
+
 
     if "кино" in text:
-        categories += [
+
+        categories.append(
             '["amenity"="cinema"]'
-        ]
+        )
+
 
     if "природа" in text:
-        categories += [
+
+        categories.extend([
             '["leisure"="park"]',
             '["leisure"="garden"]'
-        ]
+        ])
+
 
     if "красивые места" in text:
-        categories += [
+
+        categories.extend([
             '["tourism"="viewpoint"]',
             '["tourism"="attraction"]'
-        ]
+        ])
+
 
     if "история" in text:
-        categories += [
+
+        categories.extend([
             '["tourism"="museum"]',
             '["historic"]'
-        ]
+        ])
+
 
     if "шопинг" in text:
-        categories += [
+
+        categories.append(
             '["shop"]'
-        ]
+        )
+
 
     if "развлечения" in text:
-        categories += [
+
+        categories.extend([
             '["leisure"]',
             '["amenity"="bowling_alley"]'
-        ]
+        ])
+
 
     if "образование" in text:
-        categories += [
+
+        categories.extend([
             '["amenity"="library"]',
             '["amenity"="college"]',
             '["amenity"="university"]'
-        ]
+        ])
+
 
     if "spa" in text:
-        categories += [
+
+        categories.extend([
             '["leisure"="spa"]',
             '["amenity"="spa"]'
-        ]
+        ])
+
 
     if "активности" in text:
-        categories += [
+
+        categories.extend([
             '["leisure"="sports_centre"]',
             '["leisure"="fitness_centre"]'
-        ]
+        ])
+
 
     if "необыч" in text:
-        categories += [
+
+        categories.extend([
             '["tourism"="attraction"]',
             '["tourism"="museum"]',
             '["tourism"="viewpoint"]',
             '["historic"]'
-        ]
+        ])
 
-    # Если ничего конкретного не выбрали
+
     if not categories:
+
         categories = [
             '["amenity"="cafe"]',
             '["amenity"="restaurant"]',
@@ -211,12 +254,14 @@ def get_categories(interests):
             '["leisure"="park"]'
         ]
 
-    # Убираем повторяющиеся категории
-    return list(dict.fromkeys(categories))
+
+    return list(
+        dict.fromkeys(categories)
+    )
 
 
 # ============================================================
-# ПОИСК МЕСТ ЧЕРЕЗ OPENSTREETMAP
+# OPENSTREETMAP / OVERPASS
 # ============================================================
 
 def search_overpass(
@@ -241,6 +286,7 @@ def search_overpass(
             """
         )
 
+
     query = f"""
     [out:json][timeout:25];
 
@@ -251,7 +297,9 @@ def search_overpass(
     out center tags;
     """
 
+
     last_error = None
+
 
     for server in OVERPASS_SERVERS:
 
@@ -264,6 +312,7 @@ def search_overpass(
                 timeout=30
             )
 
+
             if response.status_code != 200:
 
                 last_error = (
@@ -272,12 +321,15 @@ def search_overpass(
 
                 continue
 
+
             data = response.json()
+
 
             return data.get(
                 "elements",
                 []
             )
+
 
         except Exception as error:
 
@@ -285,15 +337,16 @@ def search_overpass(
 
             continue
 
+
     raise Exception(
         "Не удалось связаться "
-        "с серверами поиска мест. "
+        "с серверами OpenStreetMap. "
         + str(last_error)
     )
 
 
 # ============================================================
-# ОБРАБОТКА НАЙДЕННЫХ МЕСТ
+# ОБРАБОТКА МЕСТ
 # ============================================================
 
 def normalize_places(
@@ -304,6 +357,7 @@ def normalize_places(
 
     places = []
 
+
     for element in elements:
 
         tags = element.get(
@@ -311,36 +365,59 @@ def normalize_places(
             {}
         )
 
-        name = tags.get("name")
+
+        name = tags.get(
+            "name"
+        )
+
 
         if not name:
             continue
 
-        lat = element.get("lat")
-        lon = element.get("lon")
+
+        lat = element.get(
+            "lat"
+        )
+
+        lon = element.get(
+            "lon"
+        )
+
 
         center = element.get(
             "center",
             {}
         )
 
+
         if lat is None:
-            lat = center.get("lat")
+
+            lat = center.get(
+                "lat"
+            )
+
 
         if lon is None:
-            lon = center.get("lon")
+
+            lon = center.get(
+                "lon"
+            )
+
 
         if lat is None or lon is None:
+
             continue
+
 
         try:
 
             lat = float(lat)
             lon = float(lon)
 
-        except Exception:
+        except (ValueError, TypeError):
 
             continue
+
 
         distance = distance_km(
             user_lat,
@@ -348,6 +425,7 @@ def normalize_places(
             lat,
             lon
         )
+
 
         category = (
             tags.get("amenity")
@@ -358,7 +436,9 @@ def normalize_places(
             or "place"
         )
 
+
         address_parts = []
+
 
         for key in [
             "addr:street",
@@ -369,42 +449,55 @@ def normalize_places(
             value = tags.get(key)
 
             if value:
+
                 address_parts.append(
                     value
                 )
+
 
         address = ", ".join(
             address_parts
         )
 
+
         places.append({
 
-            "name": name,
+            "name":
+                name,
 
-            "category": category,
+            "category":
+                category,
 
-            "latitude": lat,
+            "latitude":
+                lat,
 
-            "longitude": lon,
+            "longitude":
+                lon,
 
-            "distance_km": round(
-                distance,
-                2
-            ),
+            "distance_km":
+                round(
+                    distance,
+                    2
+                ),
 
-            "address": address
+            "address":
+                address
 
         })
 
-    # Ближайшие места первыми
+
     places.sort(
-        key=lambda x:
-            x["distance_km"]
+        key=lambda item:
+            item["distance_km"]
     )
 
+
     # Убираем дубликаты
+
     unique = []
+
     seen = set()
+
 
     for place in places:
 
@@ -420,17 +513,24 @@ def normalize_places(
             )
         )
 
+
         if key in seen:
+
             continue
 
+
         seen.add(key)
-        unique.append(place)
+
+        unique.append(
+            place
+        )
+
 
     return unique[:20]
 
 
 # ============================================================
-# ГЛАВНАЯ СТРАНИЦА
+# ГЛАВНАЯ
 # ============================================================
 
 @app.route("/")
@@ -438,7 +538,8 @@ def home():
 
     return jsonify({
 
-        "status": "ok",
+        "status":
+            "ok",
 
         "message":
             "Kuda backend работает 🗺️",
@@ -453,7 +554,7 @@ def home():
 
 
 # ============================================================
-# HEALTH CHECK
+# HEALTH
 # ============================================================
 
 @app.route("/health")
@@ -471,7 +572,7 @@ def health():
 
 
 # ============================================================
-# ОСНОВНОЙ МАРШРУТ
+# ПОИСК МАРШРУТА
 # ============================================================
 
 @app.route(
@@ -484,6 +585,7 @@ def create_route():
         silent=True
     )
 
+
     if not data:
 
         return jsonify({
@@ -494,7 +596,10 @@ def create_route():
         }), 400
 
 
-    # Получаем город
+    # --------------------------------------------------------
+    # ГОРОД
+    # --------------------------------------------------------
+
     city = str(
         data.get(
             "city",
@@ -503,7 +608,10 @@ def create_route():
     ).strip()
 
 
-    # Получаем геолокацию
+    # --------------------------------------------------------
+    # КООРДИНАТЫ
+    # --------------------------------------------------------
+
     latitude = data.get(
         "latitude"
     )
@@ -513,11 +621,15 @@ def create_route():
     )
 
 
-    # Получаем интересы
+    # --------------------------------------------------------
+    # ИНТЕРЕСЫ
+    # --------------------------------------------------------
+
     interests = data.get(
         "interests",
         []
     )
+
 
     if not isinstance(
         interests,
@@ -528,10 +640,26 @@ def create_route():
 
 
     # ========================================================
-    # ВАРИАНТ 1 — ЕСТЬ ГЕОЛОКАЦИЯ
+    # ОПРЕДЕЛЯЕМ МЕСТОПОЛОЖЕНИЕ
     # ========================================================
 
-    if latitude is not None and longitude is not None:
+    location_source = None
+
+
+    # --------------------------------------------------------
+    # ВАРИАНТ 1:
+    # НАСТОЯЩАЯ ГЕОЛОКАЦИЯ
+    # --------------------------------------------------------
+
+    has_coordinates = (
+        latitude is not None
+        and longitude is not None
+        and str(latitude).strip() != ""
+        and str(longitude).strip() != ""
+    )
+
+
+    if has_coordinates:
 
         try:
 
@@ -543,65 +671,68 @@ def create_route():
                 longitude
             )
 
-        except Exception:
+            location_source = (
+                "geolocation"
+            )
+
+        except (
+            ValueError,
+            TypeError
+        ):
+
+            latitude = None
+            longitude = None
+
+
+    # --------------------------------------------------------
+    # ВАРИАНТ 2:
+    # ГОРОД
+    # --------------------------------------------------------
+
+    if location_source is None:
+
+        if city:
+
+            city_data = geocode_city(
+                city
+            )
+
+
+            if not city_data:
+
+                return jsonify({
+
+                    "error":
+                        f"Не удалось найти город «{city}»."
+
+                }), 404
+
+
+            latitude = city_data[
+                "latitude"
+            ]
+
+            longitude = city_data[
+                "longitude"
+            ]
+
+
+            location_source = "city"
+
+
+        else:
 
             return jsonify({
 
                 "error":
-                    "Некорректные координаты"
+                    "Укажи город "
+                    "или разреши геолокацию."
 
             }), 400
 
-        location_source = "geolocation"
-
 
     # ========================================================
-    # ВАРИАНТ 2 — ГЕОЛОКАЦИИ НЕТ, НО ЕСТЬ ГОРОД
-    # ========================================================
-
-    elif city:
-
-        city_data = geocode_city(
-            city
-        )
-
-        if not city_data:
-
-            return jsonify({
-
-                "error":
-                    f"Не удалось найти город «{city}»."
-
-            }), 404
-
-        latitude = city_data[
-            "latitude"
-        ]
-
-        longitude = city_data[
-            "longitude"
-        ]
-
-        location_source = "city"
-
-
-    # ========================================================
-    # НЕТ НИ ГОРОДА, НИ ГЕОЛОКАЦИИ
-    # ========================================================
-
-    else:
-
-        return jsonify({
-
-            "error":
-                "Укажи город "
-                "или разреши геолокацию."
-
-        }), 400
-
-
-    # ========================================================
-    # РАДИУС ПОИСКА
+    # РАДИУС
     # ========================================================
 
     distance = str(
@@ -647,24 +778,22 @@ def create_route():
         elements = search_overpass(
 
             latitude,
-
             longitude,
-
             radius,
-
             categories
 
         )
+
 
         places = normalize_places(
 
             elements,
 
             latitude,
-
             longitude
 
         )
+
 
     except Exception as error:
 
