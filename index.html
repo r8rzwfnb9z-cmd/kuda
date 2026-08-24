@@ -155,6 +155,8 @@ button {
     margin-bottom: 24px;
 
     text-align: left;
+
+    cursor: pointer;
 }
 
 .city-input {
@@ -356,7 +358,7 @@ button {
 
 .error-box {
 
-    background: #fff;
+    background: white;
 
     border-radius: 20px;
 
@@ -365,6 +367,23 @@ button {
     line-height: 1.5;
 
     margin-bottom: 15px;
+
+    word-break: break-word;
+}
+
+.city-found {
+
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 16px;
+
+    margin-bottom: 14px;
+
+    color: #555;
+
+    line-height: 1.4;
 }
 
 @media (max-width: 360px) {
@@ -393,55 +412,46 @@ button {
 
 <main class="app">
 
+    <div class="logo">
+        куда?
+    </div>
 
-<div class="logo">
-    куда?
-</div>
+    <section
+        class="hero"
+        id="hero"
+    >
 
+        <div class="emoji">
+            🗺️
+        </div>
 
-<section
-    class="hero"
-    id="hero"
->
+        <h1>
+            Куда<br>
+            сегодня?
+        </h1>
 
+        <p class="subtitle">
 
-<div class="emoji">
-    🗺️
-</div>
+            Расскажи, какой день тебе хочется —
+            мы найдём реальные места
+            под твой запрос.
 
+        </p>
 
-<h1>
-    Куда<br>
-    сегодня?
-</h1>
+        <button
+            class="start-button"
+            onclick="startApp()"
+        >
 
+            ✨ Создать маршрут
 
-<p class="subtitle">
+        </button>
 
-    Расскажи, какой день тебе хочется —
-    мы найдём реальные места
-    под твой запрос.
+    </section>
 
-</p>
-
-
-<button
-    class="start-button"
-    onclick="startApp()"
->
-
-    ✨ Создать маршрут
-
-</button>
-
-
-</section>
-
-
-<div class="footer">
-    Твой день. Твой маршрут.
-</div>
-
+    <div class="footer">
+        Твой день. Твой маршрут.
+    </div>
 
 </main>
 
@@ -449,16 +459,13 @@ button {
 <script>
 
 
-/* =================================
+/* =========================================================
    TELEGRAM
-================================= */
-
+========================================================= */
 
 const tg =
-
     window.Telegram &&
     window.Telegram.WebApp
-
         ? window.Telegram.WebApp
         : null;
 
@@ -472,19 +479,17 @@ if (tg) {
 }
 
 
-/* =================================
+/* =========================================================
    BACKEND
-================================= */
-
+========================================================= */
 
 const API_URL =
     "https://kuda-gm0k.onrender.com";
 
 
-/* =================================
-   ДАННЫЕ
-================================= */
-
+/* =========================================================
+   ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
+========================================================= */
 
 const userData = {
 
@@ -502,19 +507,18 @@ const userData = {
 
     locationMode: "",
 
-    latitude: "",
+    latitude: null,
 
-    longitude: "",
+    longitude: null,
 
     distance: ""
 
 };
 
 
-/* =================================
+/* =========================================================
    START
-================================= */
-
+========================================================= */
 
 function startApp() {
 
@@ -523,10 +527,9 @@ function startApp() {
 }
 
 
-/* =================================
-   LOCATION
-================================= */
-
+/* =========================================================
+   ВЫБОР МЕСТОПОЛОЖЕНИЯ
+========================================================= */
 
 function showLocationScreen() {
 
@@ -543,8 +546,8 @@ function showLocationScreen() {
 
         <p class="subtitle">
 
-            Используй геолокацию
-            или выбери город вручную.
+            Можно использовать геолокацию
+            или просто указать город.
 
         </p>
 
@@ -571,10 +574,9 @@ function showLocationScreen() {
 }
 
 
-/* =================================
-   GEOLOCATION
-================================= */
-
+/* =========================================================
+   ГЕОЛОКАЦИЯ TELEGRAM
+========================================================= */
 
 function useMyLocation() {
 
@@ -592,7 +594,7 @@ function useMyLocation() {
     if (!tg.LocationManager) {
 
         alert(
-            "Геолокация недоступна."
+            "Геолокация недоступна. Выбери город вручную."
         );
 
         return;
@@ -624,11 +626,11 @@ function useMyLocation() {
 
 
                     userData.latitude =
-                        location.latitude;
+                        Number(location.latitude);
 
 
                     userData.longitude =
-                        location.longitude;
+                        Number(location.longitude);
 
 
                     showDistanceScreen();
@@ -644,10 +646,9 @@ function useMyLocation() {
 }
 
 
-/* =================================
-   DISTANCE
-================================= */
-
+/* =========================================================
+   РАССТОЯНИЕ ДЛЯ ГЕОЛОКАЦИИ
+========================================================= */
 
 function showDistanceScreen() {
 
@@ -773,15 +774,15 @@ function nextFromDistance() {
 
     }
 
+
     showMoodScreen();
 
 }
 
 
-/* =================================
-   CITY
-================================= */
-
+/* =========================================================
+   РУЧНОЙ ВВОД ГОРОДА
+========================================================= */
 
 function enterCity() {
 
@@ -816,7 +817,8 @@ function enterCity() {
             class="city-input"
             id="cityInput"
             type="text"
-            placeholder="Например, Москва"
+            autocomplete="off"
+            placeholder="Например, Варшава"
         >
 
         <button
@@ -830,16 +832,44 @@ function enterCity() {
 
     `;
 
+
+    setTimeout(
+        function() {
+
+            const input =
+                document.getElementById(
+                    "cityInput"
+                );
+
+            if (input) {
+
+                input.focus();
+
+            }
+
+        },
+        100
+    );
+
 }
 
 
+/* =========================================================
+   СОХРАНЕНИЕ ГОРОДА
+========================================================= */
+
 function saveCity() {
 
+    const input =
+        document.getElementById(
+            "cityInput"
+        );
+
+
     const city =
-        document
-            .getElementById("cityInput")
-            .value
-            .trim();
+        input
+            ? input.value.trim()
+            : "";
 
 
     if (!city) {
@@ -861,10 +891,22 @@ function saveCity() {
         "city";
 
 
+    userData.latitude =
+        null;
+
+
+    userData.longitude =
+        null;
+
+
     showCitySearchMode();
 
 }
 
+
+/* =========================================================
+   ОБЛАСТЬ ПОИСКА ГОРОДА
+========================================================= */
 
 function showCitySearchMode() {
 
@@ -890,7 +932,8 @@ function showCitySearchMode() {
 
         <p class="subtitle">
 
-            Выбери область поиска.
+            Можно искать рядом с центром
+            или по всему городу.
 
         </p>
 
@@ -968,15 +1011,15 @@ function nextFromCityMode() {
 
     }
 
+
     showMoodScreen();
 
 }
 
 
-/* =================================
-   MOOD
-================================= */
-
+/* =========================================================
+   НАСТРОЕНИЕ
+========================================================= */
 
 function showMoodScreen() {
 
@@ -1053,11 +1096,11 @@ function showMoodScreen() {
                             class="choice"
                             onclick="toggleMood(
                                 this,
-                                '${text}'
+                                '${escapeAttribute(text)}'
                             )"
                         >
 
-                            ${mood}
+                            ${escapeHtml(mood)}
 
                         </button>
 
@@ -1165,15 +1208,15 @@ function nextFromMood() {
 
     }
 
+
     showCompanyScreen();
 
 }
 
 
-/* =================================
-   COMPANY
-================================= */
-
+/* =========================================================
+   КОМПАНИЯ
+========================================================= */
 
 function showCompanyScreen() {
 
@@ -1205,50 +1248,30 @@ function showCompanyScreen() {
 
             <button
                 class="choice"
-                onclick="selectCompany(
-                    this,
-                    'Один / одна'
-                )"
+                onclick="selectCompany(this,'Один / одна')"
             >
-
                 🧍 Один / одна
-
             </button>
 
             <button
                 class="choice"
-                onclick="selectCompany(
-                    this,
-                    'На свидании'
-                )"
+                onclick="selectCompany(this,'На свидании')"
             >
-
                 💕 На свидании
-
             </button>
 
             <button
                 class="choice"
-                onclick="selectCompany(
-                    this,
-                    'С друзьями'
-                )"
+                onclick="selectCompany(this,'С друзьями')"
             >
-
                 👯 С друзьями
-
             </button>
 
             <button
                 class="choice"
-                onclick="selectCompany(
-                    this,
-                    'С семьёй'
-                )"
+                onclick="selectCompany(this,'С семьёй')"
             >
-
                 👨‍👩‍👧 С семьёй
-
             </button>
 
         </div>
@@ -1305,15 +1328,15 @@ function nextFromCompany() {
 
     }
 
+
     showBudgetScreen();
 
 }
 
 
-/* =================================
-   BUDGET
-================================= */
-
+/* =========================================================
+   БЮДЖЕТ
+========================================================= */
 
 function showBudgetScreen() {
 
@@ -1369,12 +1392,12 @@ function showBudgetScreen() {
                     class="card"
                     onclick="selectBudget(
                         this,
-                        '${budget}'
+                        '${escapeAttribute(budget)}'
                     )"
                 >
 
                     <div class="card-title">
-                        ${budget}
+                        ${escapeHtml(budget)}
                     </div>
 
                 </div>
@@ -1434,15 +1457,15 @@ function nextFromBudget() {
 
     }
 
+
     showTimeScreen();
 
 }
 
 
-/* =================================
-   TIME
-================================= */
-
+/* =========================================================
+   ВРЕМЯ
+========================================================= */
 
 function showTimeScreen() {
 
@@ -1500,12 +1523,12 @@ function showTimeScreen() {
                     class="card"
                     onclick="selectTime(
                         this,
-                        '${time}'
+                        '${escapeAttribute(time)}'
                     )"
                 >
 
                     <div class="card-title">
-                        ${time}
+                        ${escapeHtml(time)}
                     </div>
 
                 </div>
@@ -1565,15 +1588,15 @@ function nextFromTime() {
 
     }
 
+
     showInterestScreen();
 
 }
 
 
-/* =================================
-   INTERESTS
-================================= */
-
+/* =========================================================
+   ИНТЕРЕСЫ
+========================================================= */
 
 function showInterestScreen() {
 
@@ -1653,11 +1676,11 @@ function showInterestScreen() {
                         class="choice"
                         onclick="toggleInterest(
                             this,
-                            '${interest}'
+                            '${escapeAttribute(interest)}'
                         )"
                     >
 
-                        ${interest}
+                        ${escapeHtml(interest)}
 
                     </button>
 
@@ -1751,10 +1774,9 @@ function selectSurpriseInterest(
 }
 
 
-/* =================================
-   ПОИСК РЕАЛЬНЫХ МЕСТ
-================================= */
-
+/* =========================================================
+   ПОИСК МЕСТ
+========================================================= */
 
 async function findPlaces() {
 
@@ -1769,34 +1791,10 @@ async function findPlaces() {
     }
 
 
-    document.getElementById("hero").innerHTML = `
-
-        <div class="emoji">
-            🔎
-        </div>
-
-        <h1>
-            Ищем<br>
-            реальные места...
-        </h1>
-
-        <p class="loading">
-
-            Подбираем места под твой запрос 🗺️
-
-            <br><br>
-
-            Обычно это занимает несколько секунд.
-
-        </p>
-
-    `;
-
-
-    const data = {
+    const payload = {
 
         city:
-            userData.city,
+            userData.city || "",
 
         latitude:
             userData.latitude,
@@ -1825,6 +1823,46 @@ async function findPlaces() {
     };
 
 
+    console.log(
+        "Kuda: отправляем запрос:",
+        payload
+    );
+
+
+    document.getElementById("hero").innerHTML = `
+
+        <div class="emoji">
+            🔎
+        </div>
+
+        <h1>
+            Ищем<br>
+            реальные места...
+        </h1>
+
+        <p class="loading">
+
+            Подбираем места под твой запрос 🗺️
+
+            <br><br>
+
+            Город:
+            <strong>
+                ${escapeHtml(
+                    userData.city ||
+                    "по геолокации"
+                )}
+            </strong>
+
+            <br><br>
+
+            Это может занять несколько секунд.
+
+        </p>
+
+    `;
+
+
     try {
 
         const response =
@@ -1838,37 +1876,87 @@ async function findPlaces() {
                     headers: {
 
                         "Content-Type":
+                            "application/json",
+
+                        "Accept":
                             "application/json"
 
                     },
 
                     body:
-                        JSON.stringify(data)
+                        JSON.stringify(
+                            payload
+                        )
 
                 }
             );
 
 
-        const result =
-            await response.json();
+        console.log(
+            "Kuda: HTTP статус:",
+            response.status
+        );
+
+
+        const rawText =
+            await response.text();
+
+
+        console.log(
+            "Kuda: ответ сервера:",
+            rawText
+        );
+
+
+        let result;
+
+
+        try {
+
+            result =
+                JSON.parse(
+                    rawText
+                );
+
+        } catch {
+
+            throw new Error(
+                "Сервер вернул некорректный ответ: "
+                + rawText.substring(0, 300)
+            );
+
+        }
 
 
         if (!response.ok) {
 
             throw new Error(
-                result.error ||
-                "Ошибка сервера"
+
+                result.error
+                ||
+                result.details
+                ||
+                "Ошибка сервера HTTP "
+                + response.status
+
             );
 
         }
 
 
         if (
-            !result.places ||
+            !result.places
+            ||
+            !Array.isArray(
+                result.places
+            )
+            ||
             !result.places.length
         ) {
 
-            showNoPlaces();
+            showNoPlaces(
+                result
+            );
 
             return;
 
@@ -1876,16 +1964,29 @@ async function findPlaces() {
 
 
         showPlaces(
-            result.places
+            result.places,
+            result
         );
 
 
     } catch (error) {
 
-        console.error(error);
+        console.error(
+            "Kuda ERROR:",
+            error
+        );
 
 
         document.getElementById("hero").innerHTML = `
+
+            <button
+                class="back-button"
+                onclick="showInterestScreen()"
+            >
+
+                ← Назад
+
+            </button>
 
             <div class="emoji">
                 ❌
@@ -1897,14 +1998,24 @@ async function findPlaces() {
 
             <div class="error-box">
 
+                <strong>
+                    Ошибка:
+                </strong>
+
+                <br><br>
+
                 ${escapeHtml(
                     error.message
                 )}
 
                 <br><br>
 
-                Возможно, сервер поиска
-                временно занят.
+                <small>
+
+                    Если ошибка повторится,
+                    пришли мне её текст.
+
+                </small>
 
             </div>
 
@@ -1924,13 +2035,13 @@ async function findPlaces() {
 }
 
 
-/* =================================
+/* =========================================================
    ПОКАЗ МЕСТ
-================================= */
-
+========================================================= */
 
 function showPlaces(
-    places
+    places,
+    result
 ) {
 
     let html = `
@@ -1955,7 +2066,19 @@ function showPlaces(
 
         <p class="subtitle">
 
-            Реальные места рядом с тобой.
+            Найдено:
+            <strong>
+                ${places.length}
+            </strong>
+
+            <br>
+
+            ${result.city
+                ? "Город: "
+                    + escapeHtml(
+                        result.city
+                    )
+                : "По твоей геолокации"}
 
         </p>
 
@@ -1969,9 +2092,9 @@ function showPlaces(
                 "https://www.google.com/maps/search/?api=1&query="
                 +
                 encodeURIComponent(
-                    place.latitude +
-                    "," +
-                    place.longitude
+                    place.latitude
+                    + ","
+                    + place.longitude
                 );
 
 
@@ -1998,8 +2121,10 @@ function showPlaces(
                     <div class="place-distance">
 
                         📍
-                        ${place.distance_km}
-                        км от тебя
+                        ${escapeHtml(
+                            place.distance_km
+                        )}
+                        км
 
                     </div>
 
@@ -2021,6 +2146,7 @@ function showPlaces(
                         class="map-button"
                         href="${mapUrl}"
                         target="_blank"
+                        rel="noopener noreferrer"
                     >
 
                         🗺️ Открыть на карте
@@ -2041,14 +2167,24 @@ function showPlaces(
 }
 
 
-/* =================================
-   НЕТ МЕСТ
-================================= */
+/* =========================================================
+   НИЧЕГО НЕ НАШЛИ
+========================================================= */
 
-
-function showNoPlaces() {
+function showNoPlaces(
+    result
+) {
 
     document.getElementById("hero").innerHTML = `
+
+        <button
+            class="back-button"
+            onclick="showInterestScreen()"
+        >
+
+            ← Изменить запрос
+
+        </button>
 
         <div class="emoji">
             😔
@@ -2061,13 +2197,24 @@ function showNoPlaces() {
 
         <p class="subtitle">
 
-            В выбранном радиусе
-            не оказалось подходящих объектов.
+            По выбранным параметрам
+            подходящих мест не найдено.
 
             <br><br>
 
-            Попробуй увеличить расстояние
-            или выбрать другие интересы.
+            Город:
+            <strong>
+                ${escapeHtml(
+                    result.city ||
+                    userData.city ||
+                    "не указан"
+                )}
+            </strong>
+
+            <br><br>
+
+            Попробуй выбрать другие интересы
+            или более широкий поиск.
 
         </p>
 
@@ -2085,10 +2232,9 @@ function showNoPlaces() {
 }
 
 
-/* =================================
-   ESCAPE HTML
-================================= */
-
+/* =========================================================
+   ЗАЩИТА ОТ HTML
+========================================================= */
 
 function escapeHtml(
     value
@@ -2107,6 +2253,31 @@ function escapeHtml(
 
 
     return div.innerHTML;
+
+}
+
+
+function escapeAttribute(
+    value
+) {
+
+    return String(
+        value == null
+            ? ""
+            : value
+    )
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /'/g,
+            "\\'"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        );
 
 }
 
