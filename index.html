@@ -3,458 +3,408 @@
 
 <head>
 
-<meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<title>куда?</title>
+  <title>куда?</title>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-<style>
+  <style>
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-body {
+    body {
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
 
-  font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+      background: #f6f3ee;
+      color: #1d1d1d;
 
-  background: #f6f3ee;
+      min-height: 100vh;
+    }
 
-  color: #1d1d1d;
+    .app {
+      max-width: 520px;
+      min-height: 100vh;
 
-  min-height: 100vh;
-}
+      margin: 0 auto;
 
-.app {
+      padding: 24px 20px 32px;
 
-  max-width: 520px;
+      display: flex;
+      flex-direction: column;
+    }
 
-  min-height: 100vh;
+    .logo {
+      font-size: 22px;
+      font-weight: 700;
+    }
 
-  margin: 0 auto;
+    .hero {
+      flex: 1;
 
-  padding: 24px 20px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
 
-  display: flex;
+      padding: 40px 0 60px;
+    }
 
-  flex-direction: column;
-}
+    .emoji {
+      font-size: 52px;
+      margin-bottom: 22px;
+    }
 
-.logo {
+    h1 {
+      font-size: 43px;
+      line-height: 1.02;
+      letter-spacing: -2px;
 
-  font-size: 22px;
+      margin-bottom: 18px;
+    }
 
-  font-weight: 700;
-}
+    .subtitle {
+      font-size: 17px;
+      line-height: 1.5;
 
-.hero {
+      color: #707070;
 
-  flex: 1;
+      max-width: 390px;
 
-  display: flex;
+      margin-bottom: 28px;
+    }
 
-  flex-direction: column;
+    button {
+      font-family: inherit;
+    }
 
-  justify-content: center;
+    .start-button,
+    .secondary-button {
 
-  padding: 40px 0 60px;
-}
+      width: 100%;
 
-.emoji {
+      border: none;
+      border-radius: 18px;
 
-  font-size: 52px;
+      padding: 17px 18px;
 
-  margin-bottom: 22px;
-}
+      font-size: 16px;
+      font-weight: 600;
 
-h1 {
+      cursor: pointer;
 
-  font-size: 43px;
+      transition: transform .15s ease;
+    }
 
-  line-height: 1.02;
+    .start-button {
+      background: #1d1d1d;
+      color: white;
+    }
 
-  letter-spacing: -2px;
+    .secondary-button {
+      background: #e8e3da;
+      color: #1d1d1d;
 
-  margin-bottom: 18px;
-}
+      margin-top: 12px;
+    }
 
-.subtitle {
+    .start-button:active,
+    .secondary-button:active,
+    .choice:active,
+    .budget-card:active,
+    .time-card:active {
+      transform: scale(.97);
+    }
 
-  font-size: 17px;
+    .back-button {
 
-  line-height: 1.5;
+      border: none;
+      background: transparent;
 
-  color: #707070;
+      color: #777;
 
-  max-width: 390px;
+      font-size: 15px;
 
-  margin-bottom: 28px;
-}
+      padding: 0;
 
-button {
+      margin-bottom: 24px;
 
-  font-family: inherit;
-}
+      cursor: pointer;
 
-.start-button,
-.secondary-button {
+      text-align: left;
+    }
 
-  width: 100%;
+    .city-input {
 
-  border: none;
+      width: 100%;
 
-  border-radius: 18px;
+      border: none;
+      outline: none;
 
-  padding: 17px 18px;
+      border-radius: 18px;
 
-  font-size: 16px;
+      padding: 18px 20px;
 
-  font-weight: 600;
+      font-size: 17px;
 
-  cursor: pointer;
+      background: white;
 
-  transition: transform .15s ease;
-}
+      color: #1d1d1d;
 
-.start-button {
+      margin-bottom: 12px;
+    }
 
-  background: #1d1d1d;
+    .choices {
 
-  color: white;
-}
+      display: grid;
 
-.secondary-button {
+      grid-template-columns: 1fr 1fr;
 
-  background: #e8e3da;
+      gap: 10px;
 
-  color: #1d1d1d;
+      margin-bottom: 22px;
+    }
 
-  margin-top: 12px;
-}
+    .choice {
 
-.start-button:active,
-.secondary-button:active,
-.choice:active,
-.budget-card:active,
-.time-card:active {
+      border: 2px solid transparent;
 
-  transform: scale(.97);
-}
+      border-radius: 18px;
 
-.back-button {
+      padding: 16px 13px;
 
-  border: none;
+      background: white;
 
-  background: transparent;
+      color: #1d1d1d;
 
-  color: #777;
+      font-size: 15px;
+      font-weight: 600;
 
-  font-size: 15px;
+      text-align: left;
 
-  padding: 0;
+      cursor: pointer;
 
-  margin-bottom: 24px;
+      transition: all .15s ease;
 
-  cursor: pointer;
+      min-height: 68px;
+    }
 
-  text-align: left;
-}
+    .choice.selected {
 
-.city-input {
+      border-color: #1d1d1d;
 
-  width: 100%;
+      background: #e8e3da;
+    }
 
-  border: none;
+    .progress {
 
-  outline: none;
+      font-size: 13px;
 
-  border-radius: 18px;
+      color: #999;
 
-  padding: 18px 20px;
+      margin-bottom: 18px;
+    }
 
-  font-size: 17px;
+    .budget-card,
+    .time-card {
 
-  background: white;
+      border: 2px solid transparent;
 
-  color: #1d1d1d;
+      border-radius: 20px;
 
-  margin-bottom: 12px;
-}
+      padding: 18px;
 
-.choices {
+      background: white;
 
-  display: grid;
+      margin-bottom: 10px;
 
-  grid-template-columns: 1fr 1fr;
+      cursor: pointer;
 
-  gap: 10px;
+      transition: all .15s ease;
+    }
 
-  margin-bottom: 22px;
-}
+    .budget-card.selected,
+    .time-card.selected {
 
-.choice {
+      border-color: #1d1d1d;
 
-  border: 2px solid transparent;
+      background: #e8e3da;
+    }
 
-  border-radius: 18px;
+    .budget-title,
+    .time-title {
 
-  padding: 16px 13px;
+      font-size: 16px;
 
-  background: white;
+      font-weight: 700;
 
-  color: #1d1d1d;
+      margin-bottom: 5px;
+    }
 
-  font-size: 15px;
+    .budget-description,
+    .time-description {
 
-  font-weight: 600;
+      font-size: 13px;
 
-  text-align: left;
+      color: #777;
 
-  cursor: pointer;
+      line-height: 1.4;
+    }
 
-  transition: all .15s ease;
+    .summary-card {
 
-  min-height: 68px;
-}
+      background: white;
 
-.choice.selected {
+      border-radius: 22px;
 
-  border-color: #1d1d1d;
+      padding: 18px;
 
-  background: #e8e3da;
-}
+      margin-bottom: 24px;
+    }
 
-.progress {
+    .summary-row {
 
-  font-size: 13px;
+      display: flex;
 
-  color: #999;
+      flex-direction: column;
 
-  margin-bottom: 18px;
-}
+      gap: 5px;
 
-.budget-card,
-.time-card {
+      padding: 13px 0;
 
-  border: 2px solid transparent;
+      border-bottom: 1px solid #eee;
 
-  border-radius: 20px;
+    }
 
-  padding: 18px;
+    .summary-row:last-child {
+      border-bottom: none;
+    }
 
-  background: white;
+    .summary-row span {
 
-  margin-bottom: 10px;
+      color: #888;
 
-  cursor: pointer;
+      font-size: 13px;
+    }
 
-  transition: all .15s ease;
-}
+    .summary-row strong {
 
-.budget-card.selected,
-.time-card.selected {
+      font-size: 15px;
 
-  border-color: #1d1d1d;
+      line-height: 1.4;
+    }
 
-  background: #e8e3da;
-}
+    .footer {
 
-.budget-title,
-.time-title {
+      text-align: center;
 
-  font-size: 16px;
+      color: #999;
 
-  font-weight: 700;
+      font-size: 13px;
+    }
 
-  margin-bottom: 5px;
-}
+    @media (max-width: 360px) {
 
-.budget-description,
-.time-description {
+      .choices {
+        grid-template-columns: 1fr;
+      }
 
-  font-size: 13px;
+      h1 {
+        font-size: 38px;
+      }
 
-  color: #777;
+    }
 
-  line-height: 1.4;
-}
-
-.route-card {
-
-  background: white;
-
-  border-radius: 22px;
-
-  padding: 18px;
-
-  margin-bottom: 12px;
-
-  position: relative;
-}
-
-.route-number {
-
-  font-size: 13px;
-
-  color: #999;
-
-  margin-bottom: 7px;
-}
-
-.route-title {
-
-  font-size: 18px;
-
-  font-weight: 700;
-
-  margin-bottom: 6px;
-}
-
-.route-description {
-
-  font-size: 14px;
-
-  color: #777;
-
-  line-height: 1.45;
-}
-
-.route-line {
-
-  text-align: center;
-
-  color: #aaa;
-
-  font-size: 20px;
-
-  margin: -3px 0 5px;
-}
-
-.summary-card {
-
-  background: #e8e3da;
-
-  border-radius: 20px;
-
-  padding: 18px;
-
-  margin: 8px 0 18px;
-}
-
-.summary-row {
-
-  display: flex;
-
-  justify-content: space-between;
-
-  gap: 12px;
-
-  font-size: 14px;
-
-  padding: 6px 0;
-}
-
-.footer {
-
-  text-align: center;
-
-  color: #999;
-
-  font-size: 13px;
-}
-
-@media (max-width: 360px) {
-
-  .choices {
-
-    grid-template-columns: 1fr;
-
-  }
-
-  h1 {
-
-    font-size: 38px;
-
-  }
-
-}
-
-</style>
+  </style>
 
 </head>
 
+
 <body>
+
 
 <main class="app">
 
-<div class="logo">
-куда?
-</div>
 
-<section
-  class="hero"
-  id="hero"
->
+  <div class="logo">
+    куда?
+  </div>
 
-<div class="emoji">
-🗺️
-</div>
 
-<h1>
+  <section
+    class="hero"
+    id="hero"
+  >
 
-Куда<br>
-сегодня?
+    <div class="emoji">
+      🗺️
+    </div>
 
-</h1>
 
-<p class="subtitle">
+    <h1>
 
-Расскажи, какой день тебе хочется —
-мы соберём маршрут с местами,
-едой, развлечениями и событиями.
+      Куда<br>
+      сегодня?
 
-</p>
+    </h1>
 
-<button
-  class="start-button"
-  onclick="startApp()"
->
 
-✨ Создать маршрут
+    <p class="subtitle">
 
-</button>
+      Расскажи, какой день тебе хочется —
+      мы соберём маршрут с местами,
+      едой, развлечениями и событиями.
 
-</section>
+    </p>
 
-<div class="footer">
 
-Твой день. Твой маршрут.
+    <button
+      class="start-button"
+      onclick="startApp()"
+    >
 
-</div>
+      ✨ Создать маршрут
+
+    </button>
+
+
+  </section>
+
+
+  <div class="footer">
+
+    Твой день. Твой маршрут.
+
+  </div>
+
 
 </main>
 
+
 <script>
+
 
 /* =========================
    TELEGRAM
 ========================= */
+
 
 const tg =
   window.Telegram &&
   window.Telegram.WebApp
     ? window.Telegram.WebApp
     : null;
+
 
 if (tg) {
 
@@ -466,8 +416,18 @@ if (tg) {
 
 
 /* =========================
+   BACKEND
+========================= */
+
+
+const API_URL =
+  "https://kuda-gm0k.onrender.com";
+
+
+/* =========================
    ДАННЫЕ
 ========================= */
+
 
 const userData = {
 
@@ -493,12 +453,14 @@ const userData = {
 
 };
 
+
 let citySearchMode = "";
 
 
 /* =========================
    START
 ========================= */
+
 
 function startApp() {
 
@@ -508,8 +470,9 @@ function startApp() {
 
 
 /* =========================
-   LOCATION
+   LOCATION SCREEN
 ========================= */
+
 
 function showLocationScreen() {
 
@@ -527,9 +490,10 @@ function showLocationScreen() {
     <p class="subtitle">
 
       Мы можем найти маршрут рядом с тобой
-      или построить его в выбранном городе.
+      или построить его в любом выбранном городе.
 
     </p>
+
 
     <button
       class="start-button"
@@ -539,6 +503,7 @@ function showLocationScreen() {
       📍 Использовать мою геолокацию
 
     </button>
+
 
     <button
       class="secondary-button"
@@ -558,6 +523,7 @@ function showLocationScreen() {
    GEOLOCATION
 ========================= */
 
+
 function useMyLocation() {
 
   if (!tg) {
@@ -570,6 +536,7 @@ function useMyLocation() {
 
   }
 
+
   if (!tg.LocationManager) {
 
     alert(
@@ -580,6 +547,7 @@ function useMyLocation() {
 
   }
 
+
   tg.LocationManager.init(function() {
 
     tg.LocationManager.getLocation(
@@ -588,21 +556,43 @@ function useMyLocation() {
         if (!location) {
 
           alert(
-            "Не удалось получить геолокацию. Разреши доступ к местоположению 📍"
+            "Не удалось получить геолокацию. Разреши доступ к местоположению и попробуй ещё раз 📍"
           );
 
           return;
 
         }
 
+
         userData.locationMode =
           "nearby";
+
 
         userData.latitude =
           location.latitude;
 
+
         userData.longitude =
           location.longitude;
+
+
+        localStorage.setItem(
+          "locationMode",
+          "nearby"
+        );
+
+
+        localStorage.setItem(
+          "latitude",
+          location.latitude
+        );
+
+
+        localStorage.setItem(
+          "longitude",
+          location.longitude
+        );
+
 
         showDistanceScreen();
 
@@ -618,6 +608,7 @@ function useMyLocation() {
    DISTANCE
 ========================= */
 
+
 function showDistanceScreen() {
 
   document.getElementById("hero").innerHTML = `
@@ -631,21 +622,27 @@ function showDistanceScreen() {
 
     </button>
 
+
     <div class="emoji">
       📏
     </div>
 
+
     <h1>
+
       Насколько далеко<br>
       готова ехать?
+
     </h1>
+
 
     <p class="subtitle">
 
       Можно искать только рядом
-      или разрешить поиск по всему городу.
+      или разрешить нам искать по всему городу.
 
     </p>
+
 
     <div
       class="time-card"
@@ -662,6 +659,7 @@ function showDistanceScreen() {
 
     </div>
 
+
     <div
       class="time-card"
       onclick="selectDistance(this,'До 30 минут')"
@@ -676,6 +674,7 @@ function showDistanceScreen() {
       </div>
 
     </div>
+
 
     <div
       class="time-card"
@@ -692,6 +691,7 @@ function showDistanceScreen() {
 
     </div>
 
+
     <div
       class="time-card"
       onclick="selectDistance(this,'Где угодно в городе')"
@@ -707,6 +707,7 @@ function showDistanceScreen() {
 
     </div>
 
+
     <button
       class="start-button"
       onclick="nextFromDistance()"
@@ -720,31 +721,49 @@ function showDistanceScreen() {
 
 }
 
+
 function selectDistance(card, distance) {
 
-  userData.distance = distance;
+  userData.distance =
+    distance;
+
 
   document
     .querySelectorAll(".time-card")
     .forEach(function(item) {
 
-      item.classList.remove("selected");
+      item.classList.remove(
+        "selected"
+      );
 
     });
 
-  card.classList.add("selected");
+
+  card.classList.add(
+    "selected"
+  );
 
 }
+
 
 function nextFromDistance() {
 
   if (!userData.distance) {
 
-    alert("Выбери расстояние 📏");
+    alert(
+      "Выбери расстояние 📏"
+    );
 
     return;
 
   }
+
+
+  localStorage.setItem(
+    "distance",
+    userData.distance
+  );
+
 
   showMoodScreen();
 
@@ -754,6 +773,7 @@ function nextFromDistance() {
 /* =========================
    CITY
 ========================= */
+
 
 function enterCity() {
 
@@ -768,14 +788,19 @@ function enterCity() {
 
     </button>
 
+
     <div class="emoji">
       🌆
     </div>
 
+
     <h1>
+
       Какой<br>
       город?
+
     </h1>
+
 
     <p class="subtitle">
 
@@ -784,12 +809,14 @@ function enterCity() {
 
     </p>
 
+
     <input
       class="city-input"
       id="cityInput"
       type="text"
       placeholder="Например, Москва"
     >
+
 
     <button
       class="start-button"
@@ -802,11 +829,13 @@ function enterCity() {
 
   `;
 
+
   document
     .getElementById("cityInput")
     .focus();
 
 }
+
 
 function saveCity() {
 
@@ -816,21 +845,42 @@ function saveCity() {
       .value
       .trim();
 
+
   if (!city) {
 
-    alert("Напиши название города 🙂");
+    alert(
+      "Напиши название города 🙂"
+    );
 
     return;
 
   }
 
-  userData.city = city;
 
-  userData.locationMode = "city";
+  userData.city =
+    city;
+
+
+  userData.locationMode =
+    "city";
+
+
+  localStorage.setItem(
+    "city",
+    city
+  );
+
+
+  localStorage.setItem(
+    "locationMode",
+    "city"
+  );
+
 
   showCitySearchMode();
 
 }
+
 
 function showCitySearchMode() {
 
@@ -845,14 +895,19 @@ function showCitySearchMode() {
 
     </button>
 
+
     <div class="emoji">
       🏙️
     </div>
 
+
     <h1>
+
       Где искать<br>
       маршрут?
+
     </h1>
+
 
     <p class="subtitle">
 
@@ -860,6 +915,7 @@ function showCitySearchMode() {
       или посмотреть весь город.
 
     </p>
+
 
     <div
       class="time-card"
@@ -876,6 +932,7 @@ function showCitySearchMode() {
 
     </div>
 
+
     <div
       class="time-card"
       onclick="selectCityMode(this,'Весь город')"
@@ -886,10 +943,11 @@ function showCitySearchMode() {
       </div>
 
       <div class="time-description">
-        Ищем варианты по всему городу
+        Ищем лучшие варианты где угодно
       </div>
 
     </div>
+
 
     <button
       class="start-button"
@@ -904,33 +962,53 @@ function showCitySearchMode() {
 
 }
 
+
 function selectCityMode(card, mode) {
 
-  citySearchMode = mode;
+  citySearchMode =
+    mode;
+
 
   document
     .querySelectorAll(".time-card")
     .forEach(function(item) {
 
-      item.classList.remove("selected");
+      item.classList.remove(
+        "selected"
+      );
 
     });
 
-  card.classList.add("selected");
+
+  card.classList.add(
+    "selected"
+  );
 
 }
+
 
 function nextFromCityMode() {
 
   if (!citySearchMode) {
 
-    alert("Выбери, где искать маршрут 🏙️");
+    alert(
+      "Выбери, где искать маршрут 🏙️"
+    );
 
     return;
 
   }
 
-  userData.distance = citySearchMode;
+
+  userData.distance =
+    citySearchMode;
+
+
+  localStorage.setItem(
+    "distance",
+    citySearchMode
+  );
+
 
   showMoodScreen();
 
@@ -940,6 +1018,7 @@ function nextFromCityMode() {
 /* =========================
    MOOD
 ========================= */
+
 
 function showMoodScreen() {
 
@@ -954,56 +1033,121 @@ function showMoodScreen() {
 
     </button>
 
+
     <div class="progress">
       Шаг 2 из 6
     </div>
+
 
     <div class="emoji">
       ✨
     </div>
 
+
     <h1>
+
       Что тебе<br>
       хочется?
+
     </h1>
 
+
     <p class="subtitle">
+
       Выбери всё, что подходит.
+
     </p>
+
 
     <div class="choices">
 
-      ${[
-        ["🌿","Перезагрузиться"],
-        ["🫶","Время для себя"],
-        ["⚡","Выпустить энергию"],
-        ["🎨","Вдохновиться"],
-        ["🍷","Красиво провести вечер"],
-        ["💕","Устроить свидание"],
-        ["👯","Повеселиться с друзьями"],
-        ["🧠","Узнать что-то новое"],
-        ["📸","Найти красивые места"],
-        ["🎭","Интересное событие"],
-        ["🍜","Вкусно поесть"],
-        ["🛍️","Шопинг"],
-        ["🎲","Необычное приключение"]
-      ].map(x => `
-        <button
-          class="choice"
-          onclick="toggleMood(this,'${x[1]}')"
-        >
-          ${x[0]} ${x[1]}
-        </button>
-      `).join("")}
 
-      <button
-        class="choice"
-        onclick="toggleSurpriseMood(this)"
-      >
+      <button class="choice"
+        onclick="toggleMood(this,'Перезагрузиться')">
+        🌿 Перезагрузиться
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Время для себя')">
+        🫶 Время для себя
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Выпустить энергию')">
+        ⚡ Выпустить энергию
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Вдохновиться')">
+        🎨 Вдохновиться
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Красиво провести вечер')">
+        🍷 Красиво провести вечер
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Свидание')">
+        💕 Устроить свидание
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Повеселиться с друзьями')">
+        👯 Повеселиться с друзьями
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Узнать что-то новое')">
+        🧠 Узнать что-то новое
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Найти красивые места')">
+        📸 Найти красивые места
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Интересное событие')">
+        🎭 Интересное событие
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Вкусно поесть')">
+        🍜 Вкусно поесть
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Шопинг')">
+        🛍️ Шопинг
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleMood(this,'Необычное приключение')">
+        🎲 Необычное приключение
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleSurpriseMood(this)">
         ✨ Удиви меня
       </button>
 
+
     </div>
+
 
     <button
       class="start-button"
@@ -1018,69 +1162,129 @@ function showMoodScreen() {
 
 }
 
+
 function toggleMood(button, mood) {
 
-  const surprise =
-    userData.moods.indexOf("Удиви меня");
+  const surpriseIndex =
+    userData.moods.indexOf(
+      "Удиви меня"
+    );
 
-  if (surprise !== -1) {
+
+  if (surpriseIndex !== -1) {
 
     userData.moods = [];
+
 
     document
       .querySelectorAll(".choice")
       .forEach(function(item) {
 
-        item.classList.remove("selected");
+        item.classList.remove(
+          "selected"
+        );
 
       });
 
   }
 
+
   const index =
-    userData.moods.indexOf(mood);
+    userData.moods.indexOf(
+      mood
+    );
+
 
   if (index === -1) {
 
-    userData.moods.push(mood);
+    userData.moods.push(
+      mood
+    );
 
-    button.classList.add("selected");
+    button.classList.add(
+      "selected"
+    );
 
   } else {
 
-    userData.moods.splice(index,1);
+    userData.moods.splice(
+      index,
+      1
+    );
 
-    button.classList.remove("selected");
+    button.classList.remove(
+      "selected"
+    );
 
   }
 
 }
 
+
 function toggleSurpriseMood(button) {
 
-  userData.moods = ["Удиви меня"];
+  const index =
+    userData.moods.indexOf(
+      "Удиви меня"
+    );
 
-  document
-    .querySelectorAll(".choice")
-    .forEach(function(item) {
 
-      item.classList.remove("selected");
+  if (index === -1) {
 
-    });
+    userData.moods =
+      ["Удиви меня"];
 
-  button.classList.add("selected");
+
+    document
+      .querySelectorAll(".choice")
+      .forEach(function(item) {
+
+        item.classList.remove(
+          "selected"
+        );
+
+      });
+
+
+    button.classList.add(
+      "selected"
+    );
+
+  } else {
+
+    userData.moods = [];
+
+    button.classList.remove(
+      "selected"
+    );
+
+  }
 
 }
 
+
 function nextFromMood() {
 
-  if (userData.moods.length === 0) {
+  if (
+    userData.moods.length === 0
+  ) {
 
-    alert("Выбери хотя бы один вариант ✨");
+    alert(
+      "Выбери хотя бы один вариант ✨"
+    );
 
     return;
 
   }
+
+
+  localStorage.setItem(
+    "moods",
+    JSON.stringify(
+      userData.moods
+    )
+  );
+
 
   showCompanyScreen();
 
@@ -1091,6 +1295,7 @@ function nextFromMood() {
    COMPANY
 ========================= */
 
+
 function showCompanyScreen() {
 
   document.getElementById("hero").innerHTML = `
@@ -1099,54 +1304,73 @@ function showCompanyScreen() {
       class="back-button"
       onclick="showMoodScreen()"
     >
+
       ← Назад
+
     </button>
+
 
     <div class="progress">
       Шаг 3 из 6
     </div>
 
+
     <div class="emoji">
       👯
     </div>
 
+
     <h1>
+
       С кем<br>
       отправляемся?
+
     </h1>
 
+
     <p class="subtitle">
-      Это поможет подобрать подходящие места.
+
+      Это поможет подобрать подходящие
+      места и активности.
+
     </p>
 
+
     <div class="choices">
+
 
       <button class="choice"
         onclick="selectCompany(this,'Один / одна')">
         🧍 Один / одна
       </button>
 
+
       <button class="choice"
         onclick="selectCompany(this,'На свидании')">
         💕 На свидании
       </button>
+
 
       <button class="choice"
         onclick="selectCompany(this,'С друзьями')">
         👯 С друзьями
       </button>
 
+
       <button class="choice"
         onclick="selectCompany(this,'С семьёй')">
         👨‍👩‍👧 С семьёй
       </button>
+
 
       <button class="choice"
         onclick="selectCompany(this,'С кем-то особенным')">
         🧑‍🤝‍🧑 С кем-то особенным
       </button>
 
+
     </div>
+
 
     <button
       class="start-button"
@@ -1161,31 +1385,49 @@ function showCompanyScreen() {
 
 }
 
+
 function selectCompany(button, company) {
 
-  userData.company = company;
+  userData.company =
+    company;
+
 
   document
     .querySelectorAll(".choice")
     .forEach(function(item) {
 
-      item.classList.remove("selected");
+      item.classList.remove(
+        "selected"
+      );
 
     });
 
-  button.classList.add("selected");
+
+  button.classList.add(
+    "selected"
+  );
 
 }
+
 
 function nextFromCompany() {
 
   if (!userData.company) {
 
-    alert("Выбери, с кем ты отправляешься 🙂");
+    alert(
+      "Выбери, с кем ты отправляешься 🙂"
+    );
 
     return;
 
   }
+
+
+  localStorage.setItem(
+    "company",
+    userData.company
+  );
+
 
   showBudgetScreen();
 
@@ -1196,6 +1438,7 @@ function nextFromCompany() {
    BUDGET
 ========================= */
 
+
 function showBudgetScreen() {
 
   document.getElementById("hero").innerHTML = `
@@ -1204,28 +1447,41 @@ function showBudgetScreen() {
       class="back-button"
       onclick="showCompanyScreen()"
     >
+
       ← Назад
+
     </button>
+
 
     <div class="progress">
       Шаг 4 из 6
     </div>
 
+
     <div class="emoji">
       💰
     </div>
 
+
     <h1>
+
       Какой<br>
       бюджет?
+
     </h1>
 
+
     <p class="subtitle">
+
       Примерный бюджет на одного человека.
+
     </p>
 
-    <div class="budget-card"
-      onclick="selectBudget(this,'Бесплатно')">
+
+    <div
+      class="budget-card"
+      onclick="selectBudget(this,'Бесплатно')"
+    >
 
       <div class="budget-title">
         🆓 БЕСПЛАТНО
@@ -1237,77 +1493,123 @@ function showBudgetScreen() {
 
     </div>
 
-    <div class="budget-card"
-      onclick="selectBudget(this,'До 1 500 ₽')">
+
+    <div
+      class="budget-card"
+      onclick="selectBudget(this,'До 1 500 ₽')"
+    >
+
       <div class="budget-title">
         💸 До 1 500 ₽
       </div>
+
     </div>
 
-    <div class="budget-card"
-      onclick="selectBudget(this,'1 500–3 000 ₽')">
+
+    <div
+      class="budget-card"
+      onclick="selectBudget(this,'1 500–3 000 ₽')"
+    >
+
       <div class="budget-title">
         💸 1 500–3 000 ₽
       </div>
+
     </div>
 
-    <div class="budget-card"
-      onclick="selectBudget(this,'3 000–5 000 ₽')">
+
+    <div
+      class="budget-card"
+      onclick="selectBudget(this,'3 000–5 000 ₽')"
+    >
+
       <div class="budget-title">
         💸 3 000–5 000 ₽
       </div>
+
     </div>
 
-    <div class="budget-card"
-      onclick="selectBudget(this,'5 000–10 000 ₽')">
+
+    <div
+      class="budget-card"
+      onclick="selectBudget(this,'5 000–10 000 ₽')"
+    >
+
       <div class="budget-title">
         💎 5 000–10 000 ₽
       </div>
+
     </div>
 
-    <div class="budget-card"
-      onclick="selectBudget(this,'Неважно')">
+
+    <div
+      class="budget-card"
+      onclick="selectBudget(this,'Неважно')"
+    >
+
       <div class="budget-title">
         ✨ Бюджет не важен
       </div>
+
     </div>
+
 
     <button
       class="start-button"
       onclick="nextFromBudget()"
     >
+
       Продолжить →
+
     </button>
 
   `;
 
 }
 
-function selectBudget(card,budget) {
 
-  userData.budget = budget;
+function selectBudget(card, budget) {
+
+  userData.budget =
+    budget;
+
 
   document
     .querySelectorAll(".budget-card")
     .forEach(function(item) {
 
-      item.classList.remove("selected");
+      item.classList.remove(
+        "selected"
+      );
 
     });
 
-  card.classList.add("selected");
+
+  card.classList.add(
+    "selected"
+  );
 
 }
+
 
 function nextFromBudget() {
 
   if (!userData.budget) {
 
-    alert("Выбери бюджет 💰");
+    alert(
+      "Выбери бюджет 💰"
+    );
 
     return;
 
   }
+
+
+  localStorage.setItem(
+    "budget",
+    userData.budget
+  );
+
 
   showTimeScreen();
 
@@ -1318,6 +1620,7 @@ function nextFromBudget() {
    TIME
 ========================= */
 
+
 function showTimeScreen() {
 
   document.getElementById("hero").innerHTML = `
@@ -1326,80 +1629,164 @@ function showTimeScreen() {
       class="back-button"
       onclick="showBudgetScreen()"
     >
+
       ← Назад
+
     </button>
+
 
     <div class="progress">
       Шаг 5 из 6
     </div>
 
+
     <div class="emoji">
       ⏱️
     </div>
 
+
     <h1>
+
       Сколько у тебя<br>
       времени?
+
     </h1>
 
+
     <p class="subtitle">
+
       Мы подберём маршрут,
       который реально успеть пройти.
+
     </p>
 
-    ${[
-      ["⚡","До 1 часа"],
-      ["☕","1–2 часа"],
-      ["🌿","2–4 часа"],
-      ["🌆","4–6 часов"],
-      ["☀️","Почти весь день"],
-      ["🌙","До позднего вечера"],
-      ["✨","Неважно"]
-    ].map(x => `
-      <div class="time-card"
-        onclick="selectTime(this,'${x[1]}')">
-        <div class="time-title">
-          ${x[0]} ${x[1]}
-        </div>
+
+    <div class="time-card"
+      onclick="selectTime(this,'До 1 часа')">
+
+      <div class="time-title">
+        ⚡ До 1 часа
       </div>
-    `).join("")}
+
+    </div>
+
+
+    <div class="time-card"
+      onclick="selectTime(this,'1–2 часа')">
+
+      <div class="time-title">
+        ☕ 1–2 часа
+      </div>
+
+    </div>
+
+
+    <div class="time-card"
+      onclick="selectTime(this,'2–4 часа')">
+
+      <div class="time-title">
+        🌿 2–4 часа
+      </div>
+
+    </div>
+
+
+    <div class="time-card"
+      onclick="selectTime(this,'4–6 часов')">
+
+      <div class="time-title">
+        🌆 4–6 часов
+      </div>
+
+    </div>
+
+
+    <div class="time-card"
+      onclick="selectTime(this,'Почти весь день')">
+
+      <div class="time-title">
+        ☀️ Почти весь день
+      </div>
+
+    </div>
+
+
+    <div class="time-card"
+      onclick="selectTime(this,'До позднего вечера')">
+
+      <div class="time-title">
+        🌙 До позднего вечера
+      </div>
+
+    </div>
+
+
+    <div class="time-card"
+      onclick="selectTime(this,'Неважно')">
+
+      <div class="time-title">
+        ✨ Неважно
+      </div>
+
+    </div>
+
 
     <button
       class="start-button"
       onclick="nextFromTime()"
     >
+
       Продолжить →
+
     </button>
 
   `;
 
 }
 
-function selectTime(card,time) {
 
-  userData.time = time;
+function selectTime(card, time) {
+
+  userData.time =
+    time;
+
 
   document
     .querySelectorAll(".time-card")
     .forEach(function(item) {
 
-      item.classList.remove("selected");
+      item.classList.remove(
+        "selected"
+      );
 
     });
 
-  card.classList.add("selected");
+
+  card.classList.add(
+    "selected"
+  );
 
 }
+
 
 function nextFromTime() {
 
   if (!userData.time) {
 
-    alert("Выбери, сколько у тебя времени ⏱️");
+    alert(
+      "Выбери, сколько у тебя времени ⏱️"
+    );
 
     return;
 
   }
+
+
+  localStorage.setItem(
+    "time",
+    userData.time
+  );
+
 
   showInterestScreen();
 
@@ -1410,6 +1797,7 @@ function nextFromTime() {
    INTERESTS
 ========================= */
 
+
 function showInterestScreen() {
 
   document.getElementById("hero").innerHTML = `
@@ -1418,361 +1806,507 @@ function showInterestScreen() {
       class="back-button"
       onclick="showTimeScreen()"
     >
+
       ← Назад
+
     </button>
+
 
     <div class="progress">
       Шаг 6 из 6
     </div>
 
+
     <div class="emoji">
       🎯
     </div>
 
+
     <h1>
+
       Что должно быть<br>
       в маршруте?
+
     </h1>
 
+
     <p class="subtitle">
+
       Можно выбрать несколько вариантов.
+
     </p>
+
 
     <div class="choices">
 
-      ${[
-        ["☕","Кофе и уютные места"],
-        ["🍜","Еда"],
-        ["🍸","Бары и вечеринки"],
-        ["🎨","Искусство"],
-        ["🎭","Театр и шоу"],
-        ["🎵","Музыка"],
-        ["🎬","Кино"],
-        ["🌳","Природа"],
-        ["📸","Красивые места"],
-        ["🏛️","История и достопримечательности"],
-        ["🛍️","Шопинг"],
-        ["🎮","Развлечения"],
-        ["🧠","Образование"],
-        ["🧖‍♀️","SPA и релакс"],
-        ["🏃","Активности"],
-        ["🎉","Актуальные мероприятия"],
-        ["🎲","Что-нибудь необычное"]
-      ].map(x => `
-        <button
-          class="choice"
-          onclick="toggleInterest(this,'${x[1]}')"
-        >
-          ${x[0]} ${x[1]}
-        </button>
-      `).join("")}
 
-      <button
-        class="choice"
-        onclick="toggleSurpriseInterest(this)"
-      >
+      <button class="choice"
+        onclick="toggleInterest(this,'Кофе и уютные места')">
+        ☕ Кофе и уютные места
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Еда')">
+        🍜 Еда
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Бары и вечеринки')">
+        🍸 Бары и вечеринки
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Искусство')">
+        🎨 Искусство
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Театр и шоу')">
+        🎭 Театр и шоу
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Музыка')">
+        🎵 Музыка
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Кино')">
+        🎬 Кино
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Природа')">
+        🌳 Природа
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Красивые места')">
+        📸 Красивые места
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'История и достопримечательности')">
+        🏛️ История
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Шопинг')">
+        🛍️ Шопинг
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Развлечения')">
+        🎮 Развлечения
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Образование')">
+        🧠 Образование
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'SPA и релакс')">
+        🧖‍♀️ SPA и релакс
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Активности')">
+        🏃 Активности
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Актуальные мероприятия')">
+        🎉 Актуальные мероприятия
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleInterest(this,'Что-нибудь необычное')">
+        🎲 Что-нибудь необычное
+      </button>
+
+
+      <button class="choice"
+        onclick="toggleSurpriseInterest(this)">
         ✨ Выбери за меня
       </button>
 
+
     </div>
+
 
     <button
       class="start-button"
       onclick="finishQuestionnaire()"
     >
+
       ✨ Создать мой маршрут
+
     </button>
 
   `;
 
 }
 
-function toggleInterest(button,interest) {
 
-  const surprise =
-    userData.interests.indexOf("Выбери за меня");
+function toggleInterest(button, interest) {
 
-  if (surprise !== -1) {
+  const surpriseIndex =
+    userData.interests.indexOf(
+      "Выбери за меня"
+    );
+
+
+  if (surpriseIndex !== -1) {
 
     userData.interests = [];
+
 
     document
       .querySelectorAll(".choice")
       .forEach(function(item) {
 
-        item.classList.remove("selected");
+        item.classList.remove(
+          "selected"
+        );
 
       });
 
   }
 
+
   const index =
-    userData.interests.indexOf(interest);
+    userData.interests.indexOf(
+      interest
+    );
+
 
   if (index === -1) {
 
-    userData.interests.push(interest);
+    userData.interests.push(
+      interest
+    );
 
-    button.classList.add("selected");
+    button.classList.add(
+      "selected"
+    );
 
   } else {
 
-    userData.interests.splice(index,1);
+    userData.interests.splice(
+      index,
+      1
+    );
 
-    button.classList.remove("selected");
+    button.classList.remove(
+      "selected"
+    );
 
   }
 
 }
 
+
 function toggleSurpriseInterest(button) {
 
-  userData.interests = ["Выбери за меня"];
+  const index =
+    userData.interests.indexOf(
+      "Выбери за меня"
+    );
 
-  document
-    .querySelectorAll(".choice")
-    .forEach(function(item) {
 
-      item.classList.remove("selected");
+  if (index === -1) {
 
-    });
+    userData.interests =
+      ["Выбери за меня"];
 
-  button.classList.add("selected");
+
+    document
+      .querySelectorAll(".choice")
+      .forEach(function(item) {
+
+        item.classList.remove(
+          "selected"
+        );
+
+      });
+
+
+    button.classList.add(
+      "selected"
+    );
+
+  } else {
+
+    userData.interests = [];
+
+    button.classList.remove(
+      "selected"
+    );
+
+  }
 
 }
 
+
+/* =========================
+   FINISH
+========================= */
+
+
 function finishQuestionnaire() {
 
-  if (userData.interests.length === 0) {
+  if (
+    userData.interests.length === 0
+  ) {
 
-    alert("Выбери хотя бы один интерес 🎯");
+    alert(
+      "Выбери хотя бы один интерес 🎯"
+    );
 
     return;
 
   }
 
-  showResult();
+
+  localStorage.setItem(
+    "interests",
+    JSON.stringify(
+      userData.interests
+    )
+  );
+
+
+  createRoute();
 
 }
 
 
 /* =========================
-   RESULT
+   SEND TO BACKEND
 ========================= */
 
-function showResult() {
 
-  const locationText =
-    userData.locationMode === "nearby"
-      ? "📍 По твоей геолокации"
-      : "🏙️ " + userData.city;
+async function createRoute() {
 
   document.getElementById("hero").innerHTML = `
 
     <div class="emoji">
-      ✨
+      🔎
     </div>
 
+
     <h1>
-      Запрос готов!
+
+      Собираем<br>
+      маршрут...
+
     </h1>
+
 
     <p class="subtitle">
 
-      <strong>
-        ${locationText}
-      </strong>
-
-      <br><br>
-
-      📏 ${userData.distance}
-
-      <br><br>
-
-      ✨ ${userData.moods.join(", ")}
-
-      <br><br>
-
-      👯 ${userData.company}
-
-      <br><br>
-
-      💰 ${userData.budget}
-
-      <br><br>
-
-      ⏱️ ${userData.time}
-
-      <br><br>
-
-      🎯 ${userData.interests.join(", ")}
+      Передаём твои предпочтения
+      и готовим маршрут 🗺️
 
     </p>
-
-    <button
-      class="start-button"
-      onclick="createRoute()"
-    >
-
-      🗺️ Найти маршрут
-
-    </button>
 
   `;
 
+
+  try {
+
+    const response =
+      await fetch(
+        API_URL + "/route",
+        {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            city:
+              userData.city,
+
+            latitude:
+              userData.latitude,
+
+            longitude:
+              userData.longitude,
+
+            moods:
+              userData.moods,
+
+            company:
+              userData.company,
+
+            budget:
+              userData.budget,
+
+            time:
+              userData.time,
+
+            interests:
+              userData.interests,
+
+            distance:
+              userData.distance
+
+          })
+
+        }
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Ошибка сервера: " +
+        response.status
+      );
+
+    }
+
+
+    const result =
+      await response.json();
+
+
+    console.log(
+      "Ответ backend:",
+      result
+    );
+
+
+    showBackendResult(
+      result
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Backend error:",
+      error
+    );
+
+
+    document.getElementById("hero").innerHTML = `
+
+      <div class="emoji">
+        ⚠️
+      </div>
+
+
+      <h1>
+
+        Что-то пошло<br>
+        не так
+
+      </h1>
+
+
+      <p class="subtitle">
+
+        Не удалось связаться
+        с сервером.
+
+        <br><br>
+
+        Проверь интернет-соединение
+        и попробуй ещё раз.
+
+      </p>
+
+
+      <button
+        class="start-button"
+        onclick="createRoute()"
+      >
+
+        🔄 Попробовать снова
+
+      </button>
+
+    `;
+
+  }
+
 }
 
 
 /* =========================
-   DEMO ROUTE
+   BACKEND RESULT
 ========================= */
 
-function createRoute() {
+
+function showBackendResult(
+  result
+) {
+
+  const locationText =
+    userData.locationMode === "nearby"
+
+      ? "📍 По твоей геолокации"
+
+      : "🏙️ " + userData.city;
+
 
   document.getElementById("hero").innerHTML = `
 
-    <button
-      class="back-button"
-      onclick="showResult()"
-    >
-
-      ← Назад
-
-    </button>
-
     <div class="emoji">
-      🗺️
+      🎉
     </div>
 
+
     <h1>
-      Твой маршрут
+
+      Запрос<br>
+      получен!
+
     </h1>
+
 
     <p class="subtitle">
 
-      Мы собрали его на основе
-      твоих предпочтений.
+      Backend успешно получил
+      все твои предпочтения.
 
     </p>
-
-
-    <div class="route-card">
-
-      <div class="route-number">
-        ТОЧКА 1
-      </div>
-
-      <div class="route-title">
-        📍 Старт
-      </div>
-
-      <div class="route-description">
-        Начинаем маршрут с твоей текущей локации.
-      </div>
-
-    </div>
-
-
-    <div class="route-line">
-      ↓
-    </div>
-
-
-    <div class="route-card">
-
-      <div class="route-number">
-        ТОЧКА 2
-      </div>
-
-      <div class="route-title">
-        ☕ Кофейня
-      </div>
-
-      <div class="route-description">
-        Уютное место, чтобы выпить кофе
-        и немного расслабиться.
-      </div>
-
-    </div>
-
-
-    <div class="route-line">
-      ↓
-    </div>
-
-
-    <div class="route-card">
-
-      <div class="route-number">
-        ТОЧКА 3
-      </div>
-
-      <div class="route-title">
-        🎨 Место для впечатлений
-      </div>
-
-      <div class="route-description">
-        Галерея, выставка или другое
-        интересное пространство.
-      </div>
-
-    </div>
-
-
-    <div class="route-line">
-      ↓
-    </div>
-
-
-    <div class="route-card">
-
-      <div class="route-number">
-        ТОЧКА 4
-      </div>
-
-      <div class="route-title">
-        🌳 Прогулка
-      </div>
-
-      <div class="route-description">
-        Спокойная прогулка и время
-        немного перезагрузиться.
-      </div>
-
-    </div>
-
-
-    <div class="route-line">
-      ↓
-    </div>
-
-
-    <div class="route-card">
-
-      <div class="route-number">
-        ТОЧКА 5
-      </div>
-
-      <div class="route-title">
-        🍜 Еда
-      </div>
-
-      <div class="route-description">
-        Финальная точка маршрута —
-        место, где можно вкусно поесть.
-      </div>
-
-    </div>
 
 
     <div class="summary-card">
 
+
       <div class="summary-row">
 
-        <span>⏱️ Время</span>
+        <span>
+          📍 Локация
+        </span>
 
         <strong>
-          ${userData.time}
+          ${locationText}
         </strong>
 
       </div>
@@ -1780,7 +2314,48 @@ function createRoute() {
 
       <div class="summary-row">
 
-        <span>💰 Бюджет</span>
+        <span>
+          📏 Расстояние
+        </span>
+
+        <strong>
+          ${userData.distance}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          ✨ Настроение
+        </span>
+
+        <strong>
+          ${userData.moods.join(", ")}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          👯 Компания
+        </span>
+
+        <strong>
+          ${userData.company}
+        </strong>
+
+      </div>
+
+
+      <div class="summary-row">
+
+        <span>
+          💰 Бюджет
+        </span>
 
         <strong>
           ${userData.budget}
@@ -1791,90 +2366,50 @@ function createRoute() {
 
       <div class="summary-row">
 
-        <span>📍 Локация</span>
+        <span>
+          ⏱️ Время
+        </span>
 
         <strong>
-          ${userData.locationMode === "nearby"
-            ? "Рядом с тобой"
-            : userData.city}
+          ${userData.time}
         </strong>
 
       </div>
 
+
+      <div class="summary-row">
+
+        <span>
+          🎯 Интересы
+        </span>
+
+        <strong>
+          ${userData.interests.join(", ")}
+        </strong>
+
+      </div>
+
+
     </div>
 
 
-    <button
-      class="start-button"
-      onclick="openMap()"
-    >
+    <p class="subtitle">
 
-      📍 Открыть маршрут
+      Следующий этап —
+      подключаем реальные места,
+      мероприятия и построение
+      маршрута 🗺️
 
-    </button>
+    </p>
+
 
   `;
 
 }
 
 
-/* =========================
-   MAP
-========================= */
-
-function openMap() {
-
-  if (
-    userData.locationMode === "nearby" &&
-    userData.latitude &&
-    userData.longitude
-  ) {
-
-    const url =
-      "https://www.google.com/maps/search/?api=1&query=" +
-      userData.latitude +
-      "," +
-      userData.longitude;
-
-    if (tg && tg.openLink) {
-
-      tg.openLink(url);
-
-    } else {
-
-      window.open(url,"_blank");
-
-    }
-
-    return;
-
-  }
-
-  if (userData.city) {
-
-    const url =
-      "https://www.google.com/maps/search/?api=1&query=" +
-      encodeURIComponent(userData.city);
-
-    if (tg && tg.openLink) {
-
-      tg.openLink(url);
-
-    } else {
-
-      window.open(url,"_blank");
-
-    }
-
-    return;
-
-  }
-
-  alert("Не удалось определить место 📍");
-
-}
-
 </script>
+
 
 </body>
 
