@@ -73,7 +73,7 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease;
+      transition: transform 0.15s ease;
     }
 
     .start-button {
@@ -148,6 +148,33 @@
       margin-bottom: 18px;
     }
 
+    .budget-card {
+      border: 2px solid transparent;
+      border-radius: 20px;
+      padding: 18px;
+      background: white;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .budget-card.selected {
+      border-color: #1d1d1d;
+      background: #e8e3da;
+    }
+
+    .budget-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .budget-description {
+      font-size: 13px;
+      color: #777;
+      line-height: 1.4;
+    }
+
     .footer {
       text-align: center;
       color: #999;
@@ -208,17 +235,19 @@
   <script>
 
     /*
-      Здесь будем хранить ответы пользователя.
+      Все ответы пользователя
     */
 
     const userData = {
       city: "",
-      moods: []
+      moods: [],
+      company: "",
+      budget: ""
     };
 
 
     /*
-      ПЕРВЫЙ ЭКРАН
+      СТАРТ
     */
 
     function startApp() {
@@ -251,9 +280,7 @@
 
 
     /*
-      ПОКА ГЕОЛОКАЦИЯ — ЗАГЛУШКА
-
-      Настоящую геолокацию подключим позже.
+      ГЕОЛОКАЦИЯ — ПОКА ЗАГЛУШКА
     */
 
     function chooseCity() {
@@ -315,7 +342,6 @@
       const city =
         document.getElementById("cityInput").value.trim();
 
-
       if (!city) {
 
         alert("Напиши название города 🙂");
@@ -324,11 +350,9 @@
 
       }
 
-
       userData.city = city;
 
       localStorage.setItem("city", city);
-
 
       showMoodScreen();
 
@@ -336,7 +360,7 @@
 
 
     /*
-      ЭКРАН НАСТРОЕНИЯ
+      ЭКРАН ЖЕЛАНИЙ
     */
 
     function showMoodScreen() {
@@ -363,127 +387,81 @@
           Мы учтём сочетание твоих желаний.
         </p>
 
-
         <div class="choices">
 
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Перезагрузиться')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Перезагрузиться')">
             🌿 Перезагрузиться
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Время для себя')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Время для себя')">
             🫶 Время для себя
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Выпустить энергию')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Выпустить энергию')">
             ⚡ Выпустить энергию
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Вдохновиться')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Вдохновиться')">
             🎨 Вдохновиться
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Красиво провести вечер')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Красиво провести вечер')">
             🍷 Красиво провести вечер
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Свидание')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Свидание')">
             💕 Устроить свидание
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Повеселиться с друзьями')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Повеселиться с друзьями')">
             👯 Повеселиться с друзьями
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Узнать что-то новое')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Узнать что-то новое')">
             🧠 Узнать что-то новое
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Найти красивые места')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Найти красивые места')">
             📸 Найти красивые места
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Интересное событие')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Интересное событие')">
             🎭 Интересное событие
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Вкусно поесть')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Вкусно поесть')">
             🍜 Вкусно поесть
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Шопинг')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Шопинг')">
             🛍️ Шопинг
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleMood(this, 'Необычное приключение')"
-          >
+          <button class="choice"
+            onclick="toggleMood(this, 'Необычное приключение')">
             🎲 Необычное приключение
           </button>
 
-
-          <button
-            class="choice"
-            onclick="toggleSurprise(this)"
-          >
+          <button class="choice"
+            onclick="toggleSurprise(this)">
             ✨ Удиви меня
           </button>
 
         </div>
 
-
-        <button
-          class="start-button"
-          onclick="nextFromMood()"
-        >
+        <button class="start-button" onclick="nextFromMood()">
           Продолжить →
         </button>
 
@@ -493,42 +471,30 @@
 
 
     /*
-      ВЫБОР НЕСКОЛЬКИХ ВАРИАНТОВ
+      МНОЖЕСТВЕННЫЙ ВЫБОР ЖЕЛАНИЙ
     */
 
     function toggleMood(button, mood) {
 
-      /*
-        Если выбран режим "Удиви меня",
-        убираем его.
-      */
-
       const surpriseIndex =
         userData.moods.indexOf("Удиви меня");
 
-
       if (surpriseIndex !== -1) {
 
-        userData.moods.splice(surpriseIndex, 1);
+        userData.moods = [];
 
         document
           .querySelectorAll(".choice")
-          .forEach(function(button) {
+          .forEach(function(item) {
 
-            button.classList.remove("selected");
+            item.classList.remove("selected");
 
           });
 
       }
 
-
-      /*
-        Добавляем или убираем вариант.
-      */
-
       const index =
         userData.moods.indexOf(mood);
-
 
       if (index === -1) {
 
@@ -548,14 +514,13 @@
 
 
     /*
-      ОСОБЫЙ РЕЖИМ "УДИВИ МЕНЯ"
+      "УДИВИ МЕНЯ"
     */
 
     function toggleSurprise(button) {
 
       const index =
         userData.moods.indexOf("Удиви меня");
-
 
       if (index === -1) {
 
@@ -583,7 +548,7 @@
 
 
     /*
-      ПРОДОЛЖИТЬ ПОСЛЕ НАСТРОЕНИЯ
+      ПОСЛЕ ЖЕЛАНИЙ → С КЕМ?
     */
 
     function nextFromMood() {
@@ -598,23 +563,281 @@
 
       }
 
-
       localStorage.setItem(
         "moods",
         JSON.stringify(userData.moods)
       );
 
+      showCompanyScreen();
 
-      /*
-        Пока показываем тестовое сообщение.
-        Следующим этапом здесь появится
-        экран "С кем ты?"
-      */
+    }
+
+
+    /*
+      ЭКРАН "С КЕМ?"
+    */
+
+    function showCompanyScreen() {
+
+      document.getElementById("hero").innerHTML = `
+
+        <button class="back-button" onclick="showMoodScreen()">
+          ← Назад
+        </button>
+
+        <div class="progress">
+          Шаг 3 из 6
+        </div>
+
+        <div class="emoji">👯</div>
+
+        <h1>
+          С кем<br>
+          отправляемся?
+        </h1>
+
+        <p class="subtitle">
+          Это поможет подобрать подходящие места
+          и активности.
+        </p>
+
+        <div class="choices">
+
+          <button class="choice"
+            onclick="selectCompany(this, 'Один / одна')">
+            🧍 Один / одна
+          </button>
+
+          <button class="choice"
+            onclick="selectCompany(this, 'На свидании')">
+            💕 На свидании
+          </button>
+
+          <button class="choice"
+            onclick="selectCompany(this, 'С друзьями')">
+            👯 С друзьями
+          </button>
+
+          <button class="choice"
+            onclick="selectCompany(this, 'С семьёй')">
+            👨‍👩‍👧 С семьёй
+          </button>
+
+          <button class="choice"
+            onclick="selectCompany(this, 'С кем-то особенным')">
+            🧑‍🤝‍🧑 С кем-то особенным
+          </button>
+
+        </div>
+
+        <button class="start-button" onclick="nextFromCompany()">
+          Продолжить →
+        </button>
+
+      `;
+
+    }
+
+
+    /*
+      ВЫБОР КОМПАНИИ
+    */
+
+    function selectCompany(button, company) {
+
+      userData.company = company;
+
+      document
+        .querySelectorAll(".choice")
+        .forEach(function(item) {
+
+          item.classList.remove("selected");
+
+        });
+
+      button.classList.add("selected");
+
+    }
+
+
+    /*
+      ПОСЛЕ "С КЕМ?" → БЮДЖЕТ
+    */
+
+    function nextFromCompany() {
+
+      if (!userData.company) {
+
+        alert(
+          "Выбери, с кем ты отправляешься 🙂"
+        );
+
+        return;
+
+      }
+
+      localStorage.setItem(
+        "company",
+        userData.company
+      );
+
+      showBudgetScreen();
+
+    }
+
+
+    /*
+      ЭКРАН БЮДЖЕТА
+    */
+
+    function showBudgetScreen() {
+
+      document.getElementById("hero").innerHTML = `
+
+        <button class="back-button" onclick="showCompanyScreen()">
+          ← Назад
+        </button>
+
+        <div class="progress">
+          Шаг 4 из 6
+        </div>
+
+        <div class="emoji">💰</div>
+
+        <h1>
+          Какой<br>
+          бюджет?
+        </h1>
+
+        <p class="subtitle">
+          Примерный бюджет на одного человека.
+        </p>
+
+
+        <div class="budget-card"
+          onclick="selectBudget(this, 'Бесплатно')">
+
+          <div class="budget-title">
+            🆓 БЕСПЛАТНО
+          </div>
+
+          <div class="budget-description">
+            Только бесплатные места и активности
+          </div>
+
+        </div>
+
+
+        <div class="budget-card"
+          onclick="selectBudget(this, 'До 1 500 ₽')">
+
+          <div class="budget-title">
+            💸 До 1 500 ₽
+          </div>
+
+        </div>
+
+
+        <div class="budget-card"
+          onclick="selectBudget(this, '1 500–3 000 ₽')">
+
+          <div class="budget-title">
+            💸 1 500–3 000 ₽
+          </div>
+
+        </div>
+
+
+        <div class="budget-card"
+          onclick="selectBudget(this, '3 000–5 000 ₽')">
+
+          <div class="budget-title">
+            💸 3 000–5 000 ₽
+          </div>
+
+        </div>
+
+
+        <div class="budget-card"
+          onclick="selectBudget(this, '5 000–10 000 ₽')">
+
+          <div class="budget-title">
+            💎 5 000–10 000 ₽
+          </div>
+
+        </div>
+
+
+        <div class="budget-card"
+          onclick="selectBudget(this, 'Неважно')">
+
+          <div class="budget-title">
+            ✨ Бюджет не важен
+          </div>
+
+        </div>
+
+
+        <button
+          class="start-button"
+          onclick="nextFromBudget()"
+          style="margin-top: 12px;"
+        >
+          Продолжить →
+        </button>
+
+      `;
+
+    }
+
+
+    /*
+      ВЫБОР БЮДЖЕТА
+    */
+
+    function selectBudget(card, budget) {
+
+      userData.budget = budget;
+
+      document
+        .querySelectorAll(".budget-card")
+        .forEach(function(item) {
+
+          item.classList.remove("selected");
+
+        });
+
+      card.classList.add("selected");
+
+    }
+
+
+    /*
+      ПОСЛЕ БЮДЖЕТА
+    */
+
+    function nextFromBudget() {
+
+      if (!userData.budget) {
+
+        alert(
+          "Выбери бюджет 💰"
+        );
+
+        return;
+
+      }
+
+      localStorage.setItem(
+        "budget",
+        userData.budget
+      );
+
 
       alert(
-        "Супер! Выбрано: " +
-        userData.moods.join(", ") +
-        "\n\nСледующий экран добавим следующим шагом ❤️"
+        "Отлично! Бюджет: " +
+        userData.budget +
+        "\n\nСледующим шагом добавим время ⏱️"
       );
 
     }
