@@ -7,6 +7,7 @@
   <title>куда?</title>
 
   <style>
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -40,68 +41,67 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding-bottom: 80px;
+      padding: 40px 0 60px;
     }
 
     .emoji {
-      font-size: 58px;
-      margin-bottom: 24px;
+      font-size: 52px;
+      margin-bottom: 22px;
     }
 
     h1 {
-      font-size: 48px;
-      line-height: 1;
+      font-size: 43px;
+      line-height: 1.02;
       letter-spacing: -2px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .subtitle {
-      font-size: 18px;
-      line-height: 1.5;
-      color: #666;
-      max-width: 380px;
-      margin-bottom: 36px;
-    }
-
-    .start-button {
-      width: 100%;
-      border: none;
-      border-radius: 18px;
-      padding: 18px 20px;
       font-size: 17px;
-      font-weight: 600;
-      cursor: pointer;
-      background: #1d1d1d;
-      color: white;
-      transition: transform 0.15s ease;
+      line-height: 1.5;
+      color: #707070;
+      max-width: 390px;
+      margin-bottom: 28px;
     }
 
-    .start-button:active {
-      transform: scale(0.97);
-    }
-
+    .start-button,
     .secondary-button {
       width: 100%;
       border: none;
       border-radius: 18px;
-      padding: 18px 20px;
-      font-size: 17px;
+      padding: 17px 18px;
+      font-size: 16px;
       font-weight: 600;
       cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .start-button {
+      background: #1d1d1d;
+      color: white;
+    }
+
+    .secondary-button {
       background: #e8e3da;
       color: #1d1d1d;
       margin-top: 12px;
-      transition: transform 0.15s ease;
     }
 
-    .secondary-button:active {
+    .start-button:active,
+    .secondary-button:active,
+    .choice:active {
       transform: scale(0.97);
     }
 
-    .footer {
-      text-align: center;
-      color: #999;
-      font-size: 13px;
+    .back-button {
+      border: none;
+      background: transparent;
+      color: #777;
+      font-size: 15px;
+      padding: 0;
+      margin-bottom: 24px;
+      cursor: pointer;
+      text-align: left;
     }
 
     .city-input {
@@ -116,16 +116,56 @@
       margin-bottom: 12px;
     }
 
-    .back-button {
-      border: none;
-      background: transparent;
-      color: #777;
-      font-size: 15px;
-      padding: 12px 0;
-      cursor: pointer;
-      margin-bottom: 10px;
-      text-align: left;
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 22px;
     }
+
+    .choice {
+      border: 2px solid transparent;
+      border-radius: 18px;
+      padding: 16px 13px;
+      background: white;
+      color: #1d1d1d;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-height: 68px;
+    }
+
+    .choice.selected {
+      border-color: #1d1d1d;
+      background: #e8e3da;
+    }
+
+    .progress {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 18px;
+    }
+
+    .footer {
+      text-align: center;
+      color: #999;
+      font-size: 13px;
+    }
+
+    @media (max-width: 360px) {
+
+      .choices {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 38px;
+      }
+
+    }
+
   </style>
 </head>
 
@@ -137,11 +177,14 @@
       куда?
     </div>
 
-    <section class="hero">
+    <section class="hero" id="hero">
 
       <div class="emoji">🗺️</div>
 
-      <h1>Куда<br>сегодня?</h1>
+      <h1>
+        Куда<br>
+        сегодня?
+      </h1>
 
       <p class="subtitle">
         Расскажи, какой день тебе хочется —
@@ -164,15 +207,30 @@
 
   <script>
 
-    // Первый экран — выбор города
+    /*
+      Здесь будем хранить ответы пользователя.
+    */
+
+    const userData = {
+      city: "",
+      moods: []
+    };
+
+
+    /*
+      ПЕРВЫЙ ЭКРАН
+    */
 
     function startApp() {
 
-      document.querySelector(".hero").innerHTML = `
+      document.getElementById("hero").innerHTML = `
 
         <div class="emoji">📍</div>
 
-        <h1>Где ты<br>сегодня?</h1>
+        <h1>
+          Где ты<br>
+          сегодня?
+        </h1>
 
         <p class="subtitle">
           Выбери город, чтобы мы могли подобрать
@@ -192,22 +250,28 @@
     }
 
 
-    // Пока временная кнопка геолокации
+    /*
+      ПОКА ГЕОЛОКАЦИЯ — ЗАГЛУШКА
+
+      Настоящую геолокацию подключим позже.
+    */
 
     function chooseCity() {
 
       alert(
-        "Функцию определения местоположения подключим следующим этапом 📍"
+        "Определение местоположения подключим следующим этапом 📍"
       );
 
     }
 
 
-    // Ввод города вручную
+    /*
+      ВВОД ГОРОДА
+    */
 
     function enterCity() {
 
-      document.querySelector(".hero").innerHTML = `
+      document.getElementById("hero").innerHTML = `
 
         <button class="back-button" onclick="startApp()">
           ← Назад
@@ -215,7 +279,10 @@
 
         <div class="emoji">🌆</div>
 
-        <h1>Какой<br>город?</h1>
+        <h1>
+          Какой<br>
+          город?
+        </h1>
 
         <p class="subtitle">
           Напиши город, в котором хочешь провести свой день.
@@ -239,14 +306,15 @@
     }
 
 
-    // Сохраняем город
+    /*
+      СОХРАНЯЕМ ГОРОД
+    */
 
     function saveCity() {
 
-      const city = document
-        .getElementById("cityInput")
-        .value
-        .trim();
+      const city =
+        document.getElementById("cityInput").value.trim();
+
 
       if (!city) {
 
@@ -256,54 +324,167 @@
 
       }
 
-      // Пока просто сохраняем город
+
+      userData.city = city;
+
       localStorage.setItem("city", city);
 
-      showMoodScreen(city);
+
+      showMoodScreen();
 
     }
 
 
-    // Следующий экран — настроение
+    /*
+      ЭКРАН НАСТРОЕНИЯ
+    */
 
-    function showMoodScreen(city) {
+    function showMoodScreen() {
 
-      document.querySelector(".hero").innerHTML = `
+      document.getElementById("hero").innerHTML = `
 
         <button class="back-button" onclick="enterCity()">
           ← Назад
         </button>
 
+        <div class="progress">
+          Шаг 2 из 6
+        </div>
+
         <div class="emoji">✨</div>
 
-        <h1>Какое у тебя<br>настроение?</h1>
+        <h1>
+          Что тебе<br>
+          хочется?
+        </h1>
 
         <p class="subtitle">
-          Сегодня ты в городе: <strong>${city}</strong>
+          Выбери всё, что подходит.
+          Мы учтём сочетание твоих желаний.
         </p>
 
-        <button class="secondary-button" onclick="selectMood('Спокойно')">
-          😌 Спокойно
-        </button>
 
-        <button class="secondary-button" onclick="selectMood('Движуха')">
-          ⚡ Хочу движухи
-        </button>
+        <div class="choices">
 
-        <button class="secondary-button" onclick="selectMood('Романтика')">
-          💕 Романтично
-        </button>
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Перезагрузиться')"
+          >
+            🌿 Перезагрузиться
+          </button>
 
-        <button class="secondary-button" onclick="selectMood('Красиво')">
-          🎨 Хочу что-нибудь красивое
-        </button>
 
-        <button class="secondary-button" onclick="selectMood('Веселье')">
-          🎉 Хочу повеселиться
-        </button>
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Время для себя')"
+          >
+            🫶 Время для себя
+          </button>
 
-        <button class="secondary-button" onclick="selectMood('Новое')">
-          🧠 Хочу узнать что-нибудь новое
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Выпустить энергию')"
+          >
+            ⚡ Выпустить энергию
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Вдохновиться')"
+          >
+            🎨 Вдохновиться
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Красиво провести вечер')"
+          >
+            🍷 Красиво провести вечер
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Свидание')"
+          >
+            💕 Устроить свидание
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Повеселиться с друзьями')"
+          >
+            👯 Повеселиться с друзьями
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Узнать что-то новое')"
+          >
+            🧠 Узнать что-то новое
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Найти красивые места')"
+          >
+            📸 Найти красивые места
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Интересное событие')"
+          >
+            🎭 Интересное событие
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Вкусно поесть')"
+          >
+            🍜 Вкусно поесть
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Шопинг')"
+          >
+            🛍️ Шопинг
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleMood(this, 'Необычное приключение')"
+          >
+            🎲 Необычное приключение
+          </button>
+
+
+          <button
+            class="choice"
+            onclick="toggleSurprise(this)"
+          >
+            ✨ Удиви меня
+          </button>
+
+        </div>
+
+
+        <button
+          class="start-button"
+          onclick="nextFromMood()"
+        >
+          Продолжить →
         </button>
 
       `;
@@ -311,15 +492,129 @@
     }
 
 
-    // Сохраняем настроение
+    /*
+      ВЫБОР НЕСКОЛЬКИХ ВАРИАНТОВ
+    */
 
-    function selectMood(mood) {
+    function toggleMood(button, mood) {
 
-      localStorage.setItem("mood", mood);
+      /*
+        Если выбран режим "Удиви меня",
+        убираем его.
+      */
+
+      const surpriseIndex =
+        userData.moods.indexOf("Удиви меня");
+
+
+      if (surpriseIndex !== -1) {
+
+        userData.moods.splice(surpriseIndex, 1);
+
+        document
+          .querySelectorAll(".choice")
+          .forEach(function(button) {
+
+            button.classList.remove("selected");
+
+          });
+
+      }
+
+
+      /*
+        Добавляем или убираем вариант.
+      */
+
+      const index =
+        userData.moods.indexOf(mood);
+
+
+      if (index === -1) {
+
+        userData.moods.push(mood);
+
+        button.classList.add("selected");
+
+      } else {
+
+        userData.moods.splice(index, 1);
+
+        button.classList.remove("selected");
+
+      }
+
+    }
+
+
+    /*
+      ОСОБЫЙ РЕЖИМ "УДИВИ МЕНЯ"
+    */
+
+    function toggleSurprise(button) {
+
+      const index =
+        userData.moods.indexOf("Удиви меня");
+
+
+      if (index === -1) {
+
+        userData.moods = ["Удиви меня"];
+
+        document
+          .querySelectorAll(".choice")
+          .forEach(function(item) {
+
+            item.classList.remove("selected");
+
+          });
+
+        button.classList.add("selected");
+
+      } else {
+
+        userData.moods = [];
+
+        button.classList.remove("selected");
+
+      }
+
+    }
+
+
+    /*
+      ПРОДОЛЖИТЬ ПОСЛЕ НАСТРОЕНИЯ
+    */
+
+    function nextFromMood() {
+
+      if (userData.moods.length === 0) {
+
+        alert(
+          "Выбери хотя бы один вариант ✨"
+        );
+
+        return;
+
+      }
+
+
+      localStorage.setItem(
+        "moods",
+        JSON.stringify(userData.moods)
+      );
+
+
+      /*
+        Пока показываем тестовое сообщение.
+        Следующим этапом здесь появится
+        экран "С кем ты?"
+      */
 
       alert(
-        "Отлично! Настроение: " + mood + " ✨\n\n" +
-        "Следующим шагом добавим остальные вопросы."
+        "Супер! Выбрано: " +
+        userData.moods.join(", ") +
+        "\n\nСледующий экран добавим следующим шагом ❤️"
       );
 
     }
