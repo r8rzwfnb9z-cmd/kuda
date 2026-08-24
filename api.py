@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app)
 
 
 @app.route("/")
@@ -14,10 +17,11 @@ def home():
 @app.route("/route", methods=["POST"])
 def create_route():
 
-    data = request.get_json()
+    data = request.get_json(silent=True)
 
     if not data:
         return jsonify({
+            "status": "error",
             "error": "Нет данных"
         }), 400
 
