@@ -89,7 +89,9 @@
 
     .start-button:active,
     .secondary-button:active,
-    .choice:active {
+    .choice:active,
+    .budget-card:active,
+    .time-card:active {
       transform: scale(0.97);
     }
 
@@ -148,7 +150,8 @@
       margin-bottom: 18px;
     }
 
-    .budget-card {
+    .budget-card,
+    .time-card {
       border: 2px solid transparent;
       border-radius: 20px;
       padding: 18px;
@@ -158,18 +161,21 @@
       transition: all 0.15s ease;
     }
 
-    .budget-card.selected {
+    .budget-card.selected,
+    .time-card.selected {
       border-color: #1d1d1d;
       background: #e8e3da;
     }
 
-    .budget-title {
+    .budget-title,
+    .time-title {
       font-size: 16px;
       font-weight: 700;
       margin-bottom: 5px;
     }
 
-    .budget-description {
+    .budget-description,
+    .time-description {
       font-size: 13px;
       color: #777;
       line-height: 1.4;
@@ -235,14 +241,15 @@
   <script>
 
     /*
-      Все ответы пользователя
+      ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
     */
 
     const userData = {
       city: "",
       moods: [],
       company: "",
-      budget: ""
+      budget: "",
+      time: ""
     };
 
 
@@ -360,7 +367,7 @@
 
 
     /*
-      ЭКРАН ЖЕЛАНИЙ
+      ЖЕЛАНИЯ
     */
 
     function showMoodScreen() {
@@ -514,7 +521,7 @@
 
 
     /*
-      "УДИВИ МЕНЯ"
+      УДИВИ МЕНЯ
     */
 
     function toggleSurprise(button) {
@@ -548,7 +555,7 @@
 
 
     /*
-      ПОСЛЕ ЖЕЛАНИЙ → С КЕМ?
+      → С КЕМ?
     */
 
     function nextFromMood() {
@@ -574,7 +581,7 @@
 
 
     /*
-      ЭКРАН "С КЕМ?"
+      С КЕМ?
     */
 
     function showCompanyScreen() {
@@ -661,7 +668,7 @@
 
 
     /*
-      ПОСЛЕ "С КЕМ?" → БЮДЖЕТ
+      → БЮДЖЕТ
     */
 
     function nextFromCompany() {
@@ -687,7 +694,7 @@
 
 
     /*
-      ЭКРАН БЮДЖЕТА
+      БЮДЖЕТ
     */
 
     function showBudgetScreen() {
@@ -713,7 +720,6 @@
           Примерный бюджет на одного человека.
         </p>
 
-
         <div class="budget-card"
           onclick="selectBudget(this, 'Бесплатно')">
 
@@ -727,7 +733,6 @@
 
         </div>
 
-
         <div class="budget-card"
           onclick="selectBudget(this, 'До 1 500 ₽')">
 
@@ -736,7 +741,6 @@
           </div>
 
         </div>
-
 
         <div class="budget-card"
           onclick="selectBudget(this, '1 500–3 000 ₽')">
@@ -747,7 +751,6 @@
 
         </div>
 
-
         <div class="budget-card"
           onclick="selectBudget(this, '3 000–5 000 ₽')">
 
@@ -756,7 +759,6 @@
           </div>
 
         </div>
-
 
         <div class="budget-card"
           onclick="selectBudget(this, '5 000–10 000 ₽')">
@@ -767,7 +769,6 @@
 
         </div>
 
-
         <div class="budget-card"
           onclick="selectBudget(this, 'Неважно')">
 
@@ -776,7 +777,6 @@
           </div>
 
         </div>
-
 
         <button
           class="start-button"
@@ -813,7 +813,7 @@
 
 
     /*
-      ПОСЛЕ БЮДЖЕТА
+      → ВРЕМЯ
     */
 
     function nextFromBudget() {
@@ -833,11 +833,198 @@
         userData.budget
       );
 
+      showTimeScreen();
+
+    }
+
+
+    /*
+      ЭКРАН ВРЕМЕНИ
+    */
+
+    function showTimeScreen() {
+
+      document.getElementById("hero").innerHTML = `
+
+        <button class="back-button" onclick="showBudgetScreen()">
+          ← Назад
+        </button>
+
+        <div class="progress">
+          Шаг 5 из 6
+        </div>
+
+        <div class="emoji">⏱️</div>
+
+        <h1>
+          Сколько у тебя<br>
+          времени?
+        </h1>
+
+        <p class="subtitle">
+          Мы подберём маршрут, который реально
+          успеть пройти.
+        </p>
+
+
+        <div class="time-card"
+          onclick="selectTime(this, 'До 1 часа')">
+
+          <div class="time-title">
+            ⚡ До 1 часа
+          </div>
+
+          <div class="time-description">
+            Что-нибудь быстрое и интересное
+          </div>
+
+        </div>
+
+
+        <div class="time-card"
+          onclick="selectTime(this, '1–2 часа')">
+
+          <div class="time-title">
+            ☕ 1–2 часа
+          </div>
+
+          <div class="time-description">
+            Небольшой маршрут
+          </div>
+
+        </div>
+
+
+        <div class="time-card"
+          onclick="selectTime(this, '2–4 часа')">
+
+          <div class="time-title">
+            🌿 2–4 часа
+          </div>
+
+          <div class="time-description">
+            Полноценная прогулка
+          </div>
+
+        </div>
+
+
+        <div class="time-card"
+          onclick="selectTime(this, '4–6 часов')">
+
+          <div class="time-title">
+            🌆 4–6 часов
+          </div>
+
+          <div class="time-description">
+            Насыщенный маршрут
+          </div>
+
+        </div>
+
+
+        <div class="time-card"
+          onclick="selectTime(this, 'Почти весь день')">
+
+          <div class="time-title">
+            ☀️ Почти весь день
+          </div>
+
+          <div class="time-description">
+            Можно устроить настоящее приключение
+          </div>
+
+        </div>
+
+
+        <div class="time-card"
+          onclick="selectTime(this, 'До позднего вечера')">
+
+          <div class="time-title">
+            🌙 До позднего вечера
+          </div>
+
+          <div class="time-description">
+            Пусть маршрут продолжается как можно дольше
+          </div>
+
+        </div>
+
+
+        <div class="time-card"
+          onclick="selectTime(this, 'Неважно')">
+
+          <div class="time-title">
+            ✨ Неважно
+          </div>
+
+          <div class="time-description">
+            Подбери оптимальную продолжительность сама
+          </div>
+
+        </div>
+
+
+        <button
+          class="start-button"
+          onclick="nextFromTime()"
+          style="margin-top: 12px;"
+        >
+          Продолжить →
+        </button>
+
+      `;
+
+    }
+
+
+    /*
+      ВЫБОР ВРЕМЕНИ
+    */
+
+    function selectTime(card, time) {
+
+      userData.time = time;
+
+      document
+        .querySelectorAll(".time-card")
+        .forEach(function(item) {
+
+          item.classList.remove("selected");
+
+        });
+
+      card.classList.add("selected");
+
+    }
+
+
+    /*
+      → СЛЕДУЮЩИЙ ЭТАП
+    */
+
+    function nextFromTime() {
+
+      if (!userData.time) {
+
+        alert(
+          "Выбери, сколько у тебя времени ⏱️"
+        );
+
+        return;
+
+      }
+
+      localStorage.setItem(
+        "time",
+        userData.time
+      );
+
 
       alert(
-        "Отлично! Бюджет: " +
-        userData.budget +
-        "\n\nСледующим шагом добавим время ⏱️"
+        "Отлично! ⏱️ " +
+        userData.time +
+        "\n\nСледующим шагом добавим интересы маршрута 🎯"
       );
 
     }
