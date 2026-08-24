@@ -249,7 +249,8 @@
       moods: [],
       company: "",
       budget: "",
-      time: ""
+      time: "",
+      interests: []
     };
 
 
@@ -839,7 +840,7 @@
 
 
     /*
-      ЭКРАН ВРЕМЕНИ
+      ВРЕМЯ
     */
 
     function showTimeScreen() {
@@ -866,7 +867,6 @@
           успеть пройти.
         </p>
 
-
         <div class="time-card"
           onclick="selectTime(this, 'До 1 часа')">
 
@@ -879,7 +879,6 @@
           </div>
 
         </div>
-
 
         <div class="time-card"
           onclick="selectTime(this, '1–2 часа')">
@@ -894,7 +893,6 @@
 
         </div>
 
-
         <div class="time-card"
           onclick="selectTime(this, '2–4 часа')">
 
@@ -907,7 +905,6 @@
           </div>
 
         </div>
-
 
         <div class="time-card"
           onclick="selectTime(this, '4–6 часов')">
@@ -922,7 +919,6 @@
 
         </div>
 
-
         <div class="time-card"
           onclick="selectTime(this, 'Почти весь день')">
 
@@ -935,7 +931,6 @@
           </div>
 
         </div>
-
 
         <div class="time-card"
           onclick="selectTime(this, 'До позднего вечера')">
@@ -950,7 +945,6 @@
 
         </div>
 
-
         <div class="time-card"
           onclick="selectTime(this, 'Неважно')">
 
@@ -963,7 +957,6 @@
           </div>
 
         </div>
-
 
         <button
           class="start-button"
@@ -1000,7 +993,7 @@
 
 
     /*
-      → СЛЕДУЮЩИЙ ЭТАП
+      → ИНТЕРЕСЫ
     */
 
     function nextFromTime() {
@@ -1020,12 +1013,331 @@
         userData.time
       );
 
+      showInterestScreen();
 
-      alert(
-        "Отлично! ⏱️ " +
-        userData.time +
-        "\n\nСледующим шагом добавим интересы маршрута 🎯"
+    }
+
+
+    /*
+      ЭКРАН ИНТЕРЕСОВ
+    */
+
+    function showInterestScreen() {
+
+      document.getElementById("hero").innerHTML = `
+
+        <button class="back-button" onclick="showTimeScreen()">
+          ← Назад
+        </button>
+
+        <div class="progress">
+          Шаг 6 из 6
+        </div>
+
+        <div class="emoji">🎯</div>
+
+        <h1>
+          Что должно быть<br>
+          в маршруте?
+        </h1>
+
+        <p class="subtitle">
+          Выбери всё, что тебе интересно.
+          Можно выбрать несколько вариантов.
+        </p>
+
+        <div class="choices">
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Кофе и уютные места')">
+            ☕ Кофе и уютные места
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Еда')">
+            🍜 Еда
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Бары и вечеринки')">
+            🍸 Бары и вечеринки
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Искусство')">
+            🎨 Искусство
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Театр и шоу')">
+            🎭 Театр и шоу
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Музыка')">
+            🎵 Музыка
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Кино')">
+            🎬 Кино
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Природа')">
+            🌳 Природа
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Красивые места')">
+            📸 Красивые места
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'История и достопримечательности')">
+            🏛️ История
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Шопинг')">
+            🛍️ Шопинг
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Развлечения')">
+            🎮 Развлечения
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Образование')">
+            🧠 Образование
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'SPA и релакс')">
+            🧖‍♀️ SPA и релакс
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Активности')">
+            🏃 Активности
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Актуальные мероприятия')">
+            🎉 Актуальные мероприятия
+          </button>
+
+          <button class="choice"
+            onclick="toggleInterest(this, 'Что-нибудь необычное')">
+            🎲 Что-нибудь необычное
+          </button>
+
+          <button class="choice"
+            onclick="toggleSurpriseInterest(this)">
+            ✨ Выбери за меня
+          </button>
+
+        </div>
+
+        <button
+          class="start-button"
+          onclick="finishQuestionnaire()"
+        >
+          ✨ Создать мой маршрут
+        </button>
+
+      `;
+
+    }
+
+
+    /*
+      МНОЖЕСТВЕННЫЙ ВЫБОР ИНТЕРЕСОВ
+    */
+
+    function toggleInterest(button, interest) {
+
+      /*
+        Если включено "Выбери за меня",
+        отключаем этот режим.
+      */
+
+      const surpriseIndex =
+        userData.interests.indexOf("Выбери за меня");
+
+
+      if (surpriseIndex !== -1) {
+
+        userData.interests = [];
+
+        document
+          .querySelectorAll(".choice")
+          .forEach(function(item) {
+
+            item.classList.remove("selected");
+
+          });
+
+      }
+
+
+      const index =
+        userData.interests.indexOf(interest);
+
+
+      if (index === -1) {
+
+        userData.interests.push(interest);
+
+        button.classList.add("selected");
+
+      } else {
+
+        userData.interests.splice(index, 1);
+
+        button.classList.remove("selected");
+
+      }
+
+    }
+
+
+    /*
+      "ВЫБЕРИ ЗА МЕНЯ"
+    */
+
+    function toggleSurpriseInterest(button) {
+
+      const index =
+        userData.interests.indexOf("Выбери за меня");
+
+
+      if (index === -1) {
+
+        userData.interests = ["Выбери за меня"];
+
+        document
+          .querySelectorAll(".choice")
+          .forEach(function(item) {
+
+            item.classList.remove("selected");
+
+          });
+
+        button.classList.add("selected");
+
+      } else {
+
+        userData.interests = [];
+
+        button.classList.remove("selected");
+
+      }
+
+    }
+
+
+    /*
+      ЗАВЕРШЕНИЕ АНКЕТЫ
+    */
+
+    function finishQuestionnaire() {
+
+      if (userData.interests.length === 0) {
+
+        alert(
+          "Выбери хотя бы один интерес 🎯"
+        );
+
+        return;
+
+      }
+
+
+      localStorage.setItem(
+        "interests",
+        JSON.stringify(userData.interests)
       );
+
+
+      /*
+        Пока показываем тестовый результат.
+        Позже здесь будет настоящий генератор маршрута.
+      */
+
+      document.getElementById("hero").innerHTML = `
+
+        <div class="emoji">
+          ✨
+        </div>
+
+        <h1>
+          Всё готово!
+        </h1>
+
+        <p class="subtitle">
+          Мы получили все параметры твоего маршрута.
+          Теперь осталось научить приложение
+          находить реальные места и события.
+        </p>
+
+        <button
+          class="start-button"
+          onclick="showUserData()"
+        >
+          🗺️ Посмотреть мои данные
+        </button>
+
+      `;
+
+    }
+
+
+    /*
+      ПОКАЗЫВАЕМ СОБРАННЫЕ ДАННЫЕ
+      (ВРЕМЕННО ДЛЯ ПРОВЕРКИ)
+    */
+
+    function showUserData() {
+
+      document.getElementById("hero").innerHTML = `
+
+        <div class="emoji">
+          🗺️
+        </div>
+
+        <h1>
+          Твой запрос
+        </h1>
+
+        <p class="subtitle">
+
+          📍 ${userData.city}
+
+          <br><br>
+
+          ✨ ${userData.moods.join(", ")}
+
+          <br><br>
+
+          👯 ${userData.company}
+
+          <br><br>
+
+          💰 ${userData.budget}
+
+          <br><br>
+
+          ⏱️ ${userData.time}
+
+          <br><br>
+
+          🎯 ${userData.interests.join(", ")}
+
+        </p>
+
+      `;
 
     }
 
