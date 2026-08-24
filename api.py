@@ -2,591 +2,391 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import requests
 import math
-
+import time
 app = Flask(__name__)
-
 CORS(app)
-
-
 # ==========================================
-# НАСТРОЙКИ
+# OVERPASS SERVERS
 # ==========================================
-
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
-
-HEADERS = {
-    "User-Agent": "Kuda Telegram Mini App"
-}
-
-
+OVERPASS_SERVERS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+]
 # ==========================================
-# ГЛАВНАЯ
+# ГЕОГРАФИЯ
 # ==========================================
-
-@app.route("/")
-def home():
-
-    return jsonify({
-        "status": "ok",
-        "message": "Kuda backend работает 🗺️"
-    })
-
-
-# ==========================================
-# СООТВЕТСТВИЕ ИНТЕРЕСОВ OSM
-# ==========================================
-
-def get_osm_filters(interests):
-
-    filters = []
-
-    for interest in interests:
-
-        if interest in [
-            "Кофе и уютные места",
-            "Еда"
-        ]:
-
-            filters.append(
-                'node["amenity"~"cafe|restaurant|fast_food|food_court"]'
-            )
-
-        elif interest == "Бары и вечеринки":
-
-            filters.append(
-                'node["amenity"~"bar|pub|nightclub"]'
-            )
-
-        elif interest == "Искусство":
-
-            filters.append(
-                'node["tourism"="museum"]'
-            )
-
-            filters.append(
-                'node["amenity"="arts_centre"]'
-            )
-
-        elif interest == "Театр и шоу":
-
-            filters.append(
-                'node["amenity"~"theatre|arts_centre"]'
-            )
-
-        elif interest == "Музыка":
-
-            filters.append(
-                'node["amenity"~"music_venue|concert_hall"]'
-            )
-
-        elif interest == "Кино":
-
-            filters.append(
-                'node["amenity"="cinema"]'
-            )
-
-        elif interest == "Природа":
-
-            filters.append(
-                'node["leisure"~"park|garden|nature_reserve"]'
-            )
-
-        elif interest == "Красивые места":
-
-            filters.append(
-                'node["tourism"~"viewpoint|attraction"]'
-            )
-
-        elif interest == "История":
-
-            filters.append(
-                'node["historic"]'
-            )
-
-        elif interest == "Шопинг":
-
-            filters.append(
-                'node["shop"]'
-            )
-
-        elif interest == "Развлечения":
-
-            filters.append(
-                'node["leisure"~"bowling_alley|water_park|amusement_arcade"]'
-            )
-
-        elif interest == "Образование":
-
-            filters.append(
-                'node["amenity"~"library|school|college|university"]'
-            )
-
-        elif interest == "SPA и релакс":
-
-            filters.append(
-                'node["leisure"~"spa|fitness_centre"]'
-            )
-
-        elif interest == "Активности":
-
-            filters.append(
-                'node["leisure"~"sports_centre|fitness_centre|pitch"]'
-            )
-
-        elif interest == "Актуальные мероприятия":
-
-            filters.append(
-                'node["amenity"~"theatre|cinema|arts_centre|music_venue"]'
-            )
-
-        elif interest == "Что-нибудь необычное":
-
-            filters.append(
-                'node["tourism"~"attraction|viewpoint"]'
-            )
-
-    return list(set(filters))
-
-
-# ==========================================
-# РАССТОЯНИЕ
-# ==========================================
-
-def get_radius(distance):
-
-    if distance == "До 15 минут":
-        return 1500
-
-    if distance == "До 30 минут":
-        return 3000
-
-    if distance == "До 60 минут":
-        return 7000
-
-    if distance == "Рядом с центром":
-        return 2500
-
-    if distance == "Весь город":
-        return 10000
-
-    return 5000
-
-
-# ==========================================
-# РАССТОЯНИЕ МЕЖДУ ТОЧКАМИ
-# ==========================================
-
-def calculate_distance(lat1, lon1, lat2, lon2):
-
-    radius = 6371
-
-    lat1 = math.radians(lat1)
-    lat2 = math.radians(lat2)
-
-    delta_lat = math.radians(lat2 - lat1)
-    delta_lon = math.radians(lon2 - lon1)
-
+def distance_km(lat1, lon1, lat2, lon2):
+    R = 6371
+    p1 = math.radians(lat1)
+    p2 = math.radians(lat2)
+    dp = math.radians(lat2 - lat1)
+    dl = math.radians(lon2 - lon1)
     a = (
-        math.sin(delta_lat / 2) ** 2
+        math.sin(dp / 2) ** 2
         +
-        math.cos(lat1)
-        *
-        math.cos(lat2)
-        *
-        math.sin(delta_lon / 2) ** 2
+        math.cos(p1)
+        * math.cos(p2)
+        * math.sin(dl / 2) ** 2
     )
-
-    c = 2 * math.atan2(
+    return R * 2 * math.atan2(
         math.sqrt(a),
         math.sqrt(1 - a)
     )
-
-    return radius * c
-
-
 # ==========================================
-# ПОИСК МЕСТ
+# КАТЕГОРИИ
 # ==========================================
-
-def search_places(
+def get_categories(interests):
+    categories = []
+    text = " ".join(interests).lower()
+    if "кофе" in text:
+        categories += [
+            '["amenity"="cafe"]'
+        ]
+    if "еда" in text:
+        categories += [
+            '["amenity"="restaurant"]',
+            '["amenity"="fast_food"]'
+        ]
+    if "бары" in text:
+        categories += [
+            '["amenity"="bar"]',
+            '["amenity"="pub"]',
+            '["amenity"="nightclub"]'
+        ]
+    if "искусство" in text:
+        categories += [
+            '["tourism"="museum"]',
+            '["tourism"="gallery"]'
+        ]
+    if "театр" in text:
+        categories += [
+            '["amenity"="theatre"]'
+        ]
+    if "музыка" in text:
+        categories += [
+            '["amenity"="music_venue"]'
+        ]
+    if "кино" in text:
+        categories += [
+            '["amenity"="cinema"]'
+        ]
+    if "природа" in text:
+        categories += [
+            '["leisure"="park"]',
+            '["leisure"="garden"]'
+        ]
+    if "красивые места" in text:
+        categories += [
+            '["tourism"="viewpoint"]',
+            '["tourism"="attraction"]'
+        ]
+    if "история" in text:
+        categories += [
+            '["tourism"="museum"]',
+            '["historic"]'
+        ]
+    if "шопинг" in text:
+        categories += [
+            '["shop"]'
+        ]
+    if "развлечения" in text:
+        categories += [
+            '["leisure"]',
+            '["amenity"="bowling_alley"]'
+        ]
+    if "образование" in text:
+        categories += [
+            '["amenity"="library"]',
+            '["amenity"="college"]',
+            '["amenity"="university"]'
+        ]
+    if "spa" in text.lower():
+        categories += [
+            '["leisure"="spa"]',
+            '["amenity"="spa"]'
+        ]
+    if "активности" in text:
+        categories += [
+            '["leisure"="sports_centre"]',
+            '["leisure"="fitness_centre"]'
+        ]
+    if not categories:
+        categories = [
+            '["amenity"="cafe"]',
+            '["amenity"="restaurant"]',
+            '["tourism"="museum"]',
+            '["leisure"="park"]'
+        ]
+    return categories
+# ==========================================
+# ПОИСК ЧЕРЕЗ OVERPASS
+# ==========================================
+def search_overpass(
     latitude,
     longitude,
-    interests,
-    distance
+    radius,
+    categories
 ):
-
-    filters = get_osm_filters(interests)
-
-    if not filters:
-
-        filters = [
-            'node["tourism"]',
-            'node["amenity"]',
-            'node["leisure"]'
-        ]
-
-
-    radius = get_radius(distance)
-
-
-    filter_text = "\n".join(
-        [
-            f"  {item}(around:{radius},{latitude},{longitude});"
-            for item in filters
-        ]
-    )
-
-
+    parts = []
+    for category in categories:
+        parts.append(
+            f"""
+            nwr(
+                around:{radius},
+                {latitude},
+                {longitude}
+            )
+            {category};
+            """
+        )
     query = f"""
     [out:json][timeout:25];
-
     (
-    {filter_text}
+        {"".join(parts)}
     );
-
     out center tags;
     """
-
-
-    response = requests.post(
-        OVERPASS_URL,
-        data=query,
-        headers=HEADERS,
-        timeout=35
+    headers = {
+        "User-Agent": "KudaMiniApp/1.0"
+    }
+    last_error = None
+    for server in OVERPASS_SERVERS:
+        try:
+            response = requests.post(
+                server,
+                data=query.encode("utf-8"),
+                headers=headers,
+                timeout=30
+            )
+            if response.status_code != 200:
+                last_error = (
+                    f"HTTP {response.status_code}"
+                )
+                continue
+            data = response.json()
+            return data.get(
+                "elements",
+                []
+            )
+        except Exception as error:
+            last_error = str(error)
+            continue
+    raise Exception(
+        "Не удалось связаться с серверами поиска мест. "
+        + str(last_error)
     )
-
-
-    response.raise_for_status()
-
-
-    data = response.json()
-
-
+# ==========================================
+# НОРМАЛИЗАЦИЯ МЕСТ
+# ==========================================
+def normalize_places(
+    elements,
+    user_lat,
+    user_lon
+):
     places = []
-
-
-    for element in data.get("elements", []):
-
-        tags = element.get("tags", {})
-
-
-        name = tags.get("name")
-
+    for element in elements:
+        tags = element.get(
+            "tags",
+            {}
+        )
+        name = tags.get(
+            "name"
+        )
         if not name:
             continue
-
-
-        lat = element.get("lat")
-
-        lon = element.get("lon")
-
-
-        if lat is None or lon is None:
-
-            center = element.get("center", {})
-
-            lat = center.get("lat")
-
-            lon = center.get("lon")
-
-
+        lat = element.get(
+            "lat"
+        )
+        lon = element.get(
+            "lon"
+        )
+        center = element.get(
+            "center",
+            {}
+        )
+        if lat is None:
+            lat = center.get(
+                "lat"
+            )
+        if lon is None:
+            lon = center.get(
+                "lon"
+            )
         if lat is None or lon is None:
             continue
-
-
-        distance_km = calculate_distance(
-            latitude,
-            longitude,
+        distance = distance_km(
+            user_lat,
+            user_lon,
             float(lat),
             float(lon)
         )
-
-
         category = (
             tags.get("amenity")
-            or
-            tags.get("tourism")
-            or
-            tags.get("leisure")
-            or
-            tags.get("shop")
-            or
-            tags.get("historic")
-            or
-            "место"
+            or tags.get("tourism")
+            or tags.get("leisure")
+            or tags.get("shop")
+            or tags.get("historic")
+            or "place"
         )
-
-
         address_parts = []
-
-
         for key in [
             "addr:street",
             "addr:housenumber",
             "addr:city"
         ]:
-
-            if tags.get(key):
-
-                address_parts.append(
-                    tags.get(key)
-                )
-
-
+            value = tags.get(key)
+            if value:
+                address_parts.append(value)
         address = ", ".join(
             address_parts
         )
-
-
         places.append({
-
             "name": name,
-
             "category": category,
-
             "latitude": float(lat),
-
             "longitude": float(lon),
-
-            "distance_km":
-                round(distance_km, 2),
-
-            "address":
-                address,
-
-            "website":
-                tags.get("website", ""),
-
-            "phone":
-                tags.get("phone", "")
-
+            "distance_km": round(
+                distance,
+                2
+            ),
+            "address": address
         })
-
-
-    # --------------------------------------
-    # УБИРАЕМ ДУБЛИКАТЫ
-    # --------------------------------------
-
-    unique = {}
-
+    places.sort(
+        key=lambda x:
+            x["distance_km"]
+    )
+    # убираем дубликаты по названию
+    unique = []
+    seen = set()
     for place in places:
-
         key = (
             place["name"].lower(),
-            round(place["latitude"], 4),
-            round(place["longitude"], 4)
+            round(
+                place["latitude"],
+                4
+            ),
+            round(
+                place["longitude"],
+                4
+            )
         )
-
-        unique[key] = place
-
-
-    places = list(
-        unique.values()
-    )
-
-
-    # --------------------------------------
-    # СНАЧАЛА БЛИЖАЙШИЕ
-    # --------------------------------------
-
-    places.sort(
-        key=lambda x: x["distance_km"]
-    )
-
-
-    # --------------------------------------
-    # МАКСИМУМ 30 МЕСТ
-    # --------------------------------------
-
-    return places[:30]
-
-
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(place)
+    return unique[:20]
+# ==========================================
+# ГЛАВНАЯ
+# ==========================================
+@app.route("/")
+def home():
+    return jsonify({
+        "status": "ok",
+        "message":
+            "Kuda backend работает 🗺️",
+        "search":
+            "OpenStreetMap"
+    })
 # ==========================================
 # ROUTE
 # ==========================================
-
 @app.route(
     "/route",
     methods=["POST"]
 )
 def create_route():
-
-    try:
-
-        data = request.get_json()
-
-        if not data:
-
-            return jsonify({
-                "status": "error",
-                "error": "Нет данных"
-            }), 400
-
-
-        latitude = data.get(
-            "latitude"
-        )
-
-        longitude = data.get(
-            "longitude"
-        )
-
-
-        interests = data.get(
-            "interests",
-            []
-        )
-
-
-        distance = data.get(
-            "distance",
-            ""
-        )
-
-
-        # ==================================
-        # ЕСЛИ ГЕОЛОКАЦИЯ ЕСТЬ
-        # ==================================
-
-        if latitude and longitude:
-
-            places = search_places(
-
-                float(latitude),
-
-                float(longitude),
-
-                interests,
-
-                distance
-
-            )
-
-
-            return jsonify({
-
-                "status": "success",
-
-                "message":
-                    "Реальные места найдены 🗺️",
-
-                "places":
-                    places,
-
-                "count":
-                    len(places),
-
-                "request": {
-
-                    "city":
-                        data.get("city"),
-
-                    "latitude":
-                        latitude,
-
-                    "longitude":
-                        longitude,
-
-                    "moods":
-                        data.get("moods", []),
-
-                    "company":
-                        data.get("company"),
-
-                    "budget":
-                        data.get("budget"),
-
-                    "time":
-                        data.get("time"),
-
-                    "interests":
-                        interests,
-
-                    "distance":
-                        distance
-
-                }
-
-            })
-
-
-        # ==================================
-        # ЕСЛИ ТОЛЬКО ГОРОД
-        # ==================================
-
+    data = request.get_json()
+    if not data:
         return jsonify({
-
-            "status": "success",
-
-            "message":
-                "Анкета получена, но для поиска мест нужны координаты 📍",
-
-            "places": [],
-
-            "count": 0,
-
-            "request": {
-
-                "city":
-                    data.get("city"),
-
-                "latitude":
-                    latitude,
-
-                "longitude":
-                    longitude,
-
-                "moods":
-                    data.get("moods", []),
-
-                "company":
-                    data.get("company"),
-
-                "budget":
-                    data.get("budget"),
-
-                "time":
-                    data.get("time"),
-
-                "interests":
-                    interests,
-
-                "distance":
-                    distance
-
-            }
-
-        })
-
-
-    except Exception as error:
-
-        print(
-            "ERROR:",
-            str(error)
-        )
-
-        return jsonify({
-
-            "status":
-                "error",
-
             "error":
+                "Нет данных"
+        }), 400
+    latitude = data.get(
+        "latitude"
+    )
+    longitude = data.get(
+        "longitude"
+    )
+    interests = data.get(
+        "interests",
+        []
+    )
+    if not latitude or not longitude:
+        return jsonify({
+            "error":
+                "Не получена геолокация. "
+                "Для поиска реальных мест "
+                "сейчас нужна геолокация."
+        }), 400
+    try:
+        latitude = float(
+            latitude
+        )
+        longitude = float(
+            longitude
+        )
+    except:
+        return jsonify({
+            "error":
+                "Некорректные координаты"
+        }), 400
+    # --------------------------------------
+    # РАДИУС
+    # --------------------------------------
+    distance = data.get(
+        "distance",
+        ""
+    )
+    if "15" in distance:
+        radius = 1500
+    elif "30" in distance:
+        radius = 3000
+    elif "60" in distance:
+        radius = 6000
+    else:
+        radius = 10000
+    # --------------------------------------
+    # КАТЕГОРИИ
+    # --------------------------------------
+    categories = get_categories(
+        interests
+    )
+    # --------------------------------------
+    # ПОИСК
+    # --------------------------------------
+    try:
+        elements = search_overpass(
+            latitude,
+            longitude,
+            radius,
+            categories
+        )
+        places = normalize_places(
+            elements,
+            latitude,
+            longitude
+        )
+    except Exception as error:
+        return jsonify({
+            "error":
+                "Не удалось найти реальные места.",
+            "details":
                 str(error)
-
-        }), 500
-
-
+        }), 503
+    return jsonify({
+        "status":
+            "success",
+        "places":
+            places,
+        "count":
+            len(places)
+    })
 # ==========================================
-# ЗАПУСК
+# START
 # ==========================================
-
 if __name__ == "__main__":
-
     app.run(
-
         host="0.0.0.0",
-
         port=8000
-
     )
